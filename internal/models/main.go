@@ -1,4 +1,4 @@
-package main
+package models
 
 import (
 	"database/sql"
@@ -8,7 +8,7 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-func main() {
+func mainDB() {
 	db, err := sql.Open("sqlite3", "./database.db")
 	if err != nil {
 		log.Fatal(err)
