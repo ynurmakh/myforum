@@ -14,6 +14,6 @@ func main() {
 
 	http.HandleFunc("/", home)
 
-	fmt.Println("forum started on http://localhost:" + port)
+	fmt.Println("server started on http://localhost:" + port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))
 }

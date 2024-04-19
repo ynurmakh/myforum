@@ -4,11 +4,48 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"time"
 
 	_ "github.com/mattn/go-sqlite3"
 )
 
-func mainDB() {
+type User struct {
+	UserID       int       `db:"user_id"`
+	Username     string    `db:"username"`
+	Email        string    `db:"email"`
+	PasswordHash string    `db:"password_hash"`
+	CreatedAt    time.Time `db:"created_at"`
+}
+
+type Post struct {
+	PostID     int       `db:"post_id"`
+	UserID     int       `db:"user_id"`
+	CategoryID int       `db:"category_id"`
+	Title      string    `db:"title"`
+	Content    string    `db:"content"`
+	CreatedAt  time.Time `db:"created_at"`
+}
+
+type Category struct {
+	CategoryID   int    `db:"category_id"`
+	CategoryName string `db:"category_name"`
+}
+
+type Comment struct {
+	CommentID int       `db:"comment_id"`
+	PostID    int       `db:"post_id"`
+	UserID    int       `db:"user_id"`
+	Content   string    `db:"content"`
+	CreatedAt time.Time `db:"created_at"`
+}
+
+type Like struct {
+	LikeID int `db:"like_id"`
+	PostID int `db:"post_id"`
+	UserID int `db:"user_id"`
+}
+
+func openCreate() {
 	db, err := sql.Open("sqlite3", "./database.db")
 	if err != nil {
 		log.Fatal(err)
