@@ -9,6 +9,10 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
+type MainModel struct {
+	DB *sql.DB
+}
+
 type User struct {
 	UserID       int       `db:"user_id"`
 	Username     string    `db:"username"`
@@ -45,13 +49,36 @@ type Like struct {
 	UserID int `db:"user_id"`
 }
 
-func openCreate() {
+func (m *MainModel) GetPosts() []Post {
+	result := []Post{}
+
+	selectSQL := `SELECT * FROM posts`
+	rows, err := m.DB.Query(selectSQL)
+	if err != nil {
+		fmt.Println(err)
+		return result
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		post := Post{}
+		err = rows.Scan(&post.PostID, &post.UserID, &post.CategoryID, &post.Title, &post.Content, &post.CreatedAt)
+		if err != nil {
+			fmt.Println(err)
+			return result
+		}
+		result = append(result, post)
+	}
+	return result
+}
+
+func openCreate() *sql.DB {
 	db, err := sql.Open("sqlite3", "./database.db")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer db.Close()
-	create(db)
+	return db
 }
 
 func create(db *sql.DB) {
@@ -67,11 +94,26 @@ func create(db *sql.DB) {
 	}
 }
 
+// type User struct {
+// 	UserID       int       `db:"user_id"`
+// 	Username     string    `db:"username"`
+// 	Email        string    `db:"email"`
+// 	PasswordHash string    `db:"password_hash"`
+// 	CreatedAt    time.Time `db:"created_at"`
+// }
+// type Post struct {
+// 	PostID     int       `db:"post_id"`
+// 	UserID     int       `db:"user_id"`
+// 	CategoryID int       `db:"category_id"`
+// 	Title      string    `db:"title"`
+// 	Content    string    `db:"content"`
+// 	CreatedAt  time.Time `db:"created_at"`
+// }
 func insert(db *sql.DB) {
 	insertSQL := `
-	INSERT INTO users (name, age) VALUES (?, ?)
+	INSERT INTO posts (user_id, category_id, title, content, created_at) VALUES (1, 1, "some title", "some content", current_timestamp)
 	`
-	_, err := db.Exec(insertSQL, "John Doe", 25)
+	_, err := db.Exec(insertSQL)
 	if err != nil {
 		log.Fatal(err)
 	}

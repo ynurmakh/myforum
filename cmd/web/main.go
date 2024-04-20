@@ -1,19 +1,36 @@
 package main
 
 import (
+	"database/sql"
 	"flag"
-	"fmt"
+	"forum/internal/models"
 	"log"
 	"net/http"
+
+	_ "github.com/mattn/go-sqlite3"
 )
+
+type Application struct {
+	MainModel models.MainModel
+}
 
 func main() {
 	var port string
 	flag.StringVar(&port, "p", "8080", "port")
 	flag.Parse()
 
-	http.HandleFunc("/", home)
+	app := &Application{
+		MainModel: models.MainModel{DB: openDB()},
+	}
 
-	fmt.Println("server started on http://localhost:" + port)
-	log.Fatal(http.ListenAndServe(":"+port, nil))
+	log.Println("server started on http://localhost:" + port)
+	log.Fatal(http.ListenAndServe(":"+port, app.routes()))
+}
+
+func openDB() *sql.DB {
+	db, err := sql.Open("sqlite3", "internal/models/database.db")
+	if err != nil {
+		log.Fatal(err)
+	}
+	return db
 }
