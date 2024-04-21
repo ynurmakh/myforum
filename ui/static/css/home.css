@@ -1,0 +1,32 @@
+.home {
+    width: 80%;
+    min-width: 600px;
+    margin: 0 auto;
+}
+
+h2 {
+    margin: 20px 30px;
+}
+
+.post-list {
+}
+
+.post-item {
+    margin: 10px 0;
+    padding: 10px 25px;
+    border: 1px solid rgb(200, 200, 200);
+}
+
+.post-item {
+    transition: 0.1s;
+}
+
+.post-item:hover {
+    color: black;
+}
+
+.post-item .title a {
+    display: block;
+    width: fit-content;
+    padding: 5px 20px;
+}
