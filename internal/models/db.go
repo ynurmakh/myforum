@@ -86,6 +86,20 @@ func (m *MainModel) GetPost(id int) Post {
 	return post
 }
 
+func (m *MainModel) CreatePost(user_id, category_id int, title, content string) (int64, error) {
+	insertSQL := `INSERT INTO posts (user_id, category_id, title, content, created_at) VALUES (?,?,?,?, current_timestamp)`
+	res, err := m.DB.Exec(insertSQL, user_id, category_id, title, content)
+	fmt.Println(res)
+	if err != nil {
+		fmt.Println(err)
+	}
+	id, err := res.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+	return id, nil
+}
+
 func openCreate() *sql.DB {
 	db, err := sql.Open("sqlite3", "./database.db")
 	if err != nil {

@@ -3,25 +3,25 @@
 {{end}}
 
 {{define "main"}}
-    <div class="home">
-        <h2>Latest Posts</h2>
-        {{if .}}
-        <ul class="post-list">
-            {{range .}}
-            <li class="post-item">
-                <h3 class="title">
-                    <a href="/post/view/{{.PostID}}">
-                        {{.Title}}
-                    </a>
-                </h3>
-                <p>
-                    {{.Content}}
-                </p>
-            </li>
-            {{end}}
-        </ul>
-        {{else}}
-        <p>There's nothing to see here yet!</p>
+<div class="home">
+    <h2>Latest Posts</h2>
+    {{if .}}
+    <ul class="post-list">
+        {{range .}}
+        <li class="post-item">
+            <h3 class="title">
+                <a href="/post/view/{{.PostID}}">
+                    {{.Title}}
+                </a>
+            </h3>
+            <p>
+                {{.Content}}
+            </p>
+        </li>
         {{end}}
-    </div>
+    </ul>
+    {{else}}
+    <p>There's nothing to see here yet!</p>
+    {{end}}
+</div>
 {{end}}
