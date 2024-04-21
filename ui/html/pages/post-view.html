@@ -1,0 +1,11 @@
+{{define "main-styles"}}
+<link rel='stylesheet' href='/static/css/post-view.css'>
+{{end}}
+
+{{define "main"}}
+    <div class="home">
+        <h2>{{.Title}}</h2>
+        <p>{{.Content}}</p>
+        <p>{{.CreatedAt}}</p>
+    </div>
+{{end}}

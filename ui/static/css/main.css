@@ -48,3 +48,9 @@ a {
     border-left: 1px solid grey;
     border-right: 1px solid grey;
 }
+
+.main {
+    width: 80%;
+    min-width: 600px;
+    margin: 0 auto;
+}

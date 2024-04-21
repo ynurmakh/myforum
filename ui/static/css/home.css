@@ -1,7 +1,5 @@
 .home {
-    width: 80%;
-    min-width: 600px;
-    margin: 0 auto;
+
 }
 
 h2 {
@@ -18,7 +16,7 @@ h2 {
 }
 
 .post-item {
-    transition: 0.1s;
+    transition: color 0.1s;
 }
 
 .post-item:hover {

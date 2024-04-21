@@ -52,8 +52,8 @@ type Like struct {
 func (m *MainModel) GetPosts() []Post {
 	result := []Post{}
 
-	selectSQL := `SELECT * FROM posts`
-	rows, err := m.DB.Query(selectSQL)
+	query := `SELECT * FROM posts`
+	rows, err := m.DB.Query(query)
 	if err != nil {
 		fmt.Println(err)
 		return result
@@ -70,6 +70,20 @@ func (m *MainModel) GetPosts() []Post {
 		result = append(result, post)
 	}
 	return result
+}
+
+func (m *MainModel) GetPost(id int) Post {
+	query := "SELECT * FROM posts WHERE post_id = ?"
+	row := m.DB.QueryRow(query, id)
+
+	post := Post{}
+
+	err := row.Scan(&post.PostID, &post.UserID, &post.CategoryID, &post.Title, &post.Content, &post.CreatedAt)
+	if err != nil {
+		fmt.Println(err)
+		return post
+	}
+	return post
 }
 
 func openCreate() *sql.DB {
