@@ -12,6 +12,7 @@ import (
 
 type Application struct {
 	MainModel models.MainModel
+	User      models.User
 }
 
 func main() {

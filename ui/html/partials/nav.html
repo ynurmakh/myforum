@@ -1,6 +1,12 @@
 {{define "nav"}}
- <nav class="nav">
+<nav class="nav">
+    {{.User}}
     <a href='/'>Home</a>
     <a href="/post/create">Create</a>
+    <a href='/user/signup'>Signup</a>
+    <a href='/user/login'>Login</a>
+    <form action='/user/logout' method='POST'>
+        <button>Logout</button>
+    </form>
 </nav>
 {{end}}

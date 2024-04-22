@@ -100,6 +100,20 @@ func (m *MainModel) CreatePost(user_id, category_id int, title, content string) 
 	return id, nil
 }
 
+func (m *MainModel) Login(email, pass string) (User, error) {
+	query := "SELECT * FROM users WHERE email = ? AND password_hash = ?"
+	row := m.DB.QueryRow(query, email, pass)
+
+	user := User{}
+	time := ""
+
+	err := row.Scan(&user.UserID, &user.Username, &user.Email, &user.PasswordHash, &time)
+	if err != nil {
+		return user, err
+	}
+	return user, nil
+}
+
 func openCreate() *sql.DB {
 	db, err := sql.Open("sqlite3", "./database.db")
 	if err != nil {

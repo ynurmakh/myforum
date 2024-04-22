@@ -5,9 +5,9 @@
 {{define "main"}}
 <div class="home">
     <h2>Latest Posts</h2>
-    {{if .}}
+    {{if .Data}}
     <ul class="post-list">
-        {{range .}}
+        {{range .Data}}
         <li class="post-item">
             <h3 class="title">
                 <a href="/post/view/{{.PostID}}">

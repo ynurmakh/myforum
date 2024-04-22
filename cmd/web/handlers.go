@@ -2,12 +2,18 @@ package main
 
 import (
 	"fmt"
+	"forum/internal/models"
 	"html/template"
 	"log"
 	"net/http"
 	"path"
 	"strconv"
 )
+
+type TemplateData struct {
+	User models.User
+	Data any
+}
 
 func (app *Application) home(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
@@ -20,6 +26,9 @@ func (app *Application) home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	posts := app.MainModel.GetPosts()
+	data := TemplateData{
+		Data: posts,
+	}
 	files := []string{
 		"ui/html/base.html",
 		"ui/html/partials/nav.html",
@@ -30,8 +39,8 @@ func (app *Application) home(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println(err)
 	}
-
-	err = tmpl.ExecuteTemplate(w, "base", posts)
+	fmt.Println("home user:", data.User)
+	err = tmpl.ExecuteTemplate(w, "base", data)
 	if err != nil {
 		log.Println(err.Error())
 		http.Error(w, "Internal Server Error", 500)
@@ -98,6 +107,47 @@ func (app *Application) postCreate(w http.ResponseWriter, r *http.Request) {
 		content := r.PostForm.Get("content")
 		id, err := app.MainModel.CreatePost(1, 1, title, content)
 		http.Redirect(w, r, fmt.Sprintf("/post/view/%d", id), http.StatusSeeOther)
+
+	} else {
+		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+		return
+	}
+}
+
+func (app *Application) login(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodGet {
+		files := []string{
+			"ui/html/base.html",
+			"ui/html/partials/nav.html",
+			"ui/html/pages/login.html",
+		}
+
+		tmpl, err := template.ParseFiles(files...)
+		if err != nil {
+			log.Println(err)
+		}
+
+		err = tmpl.ExecuteTemplate(w, "base", nil)
+		if err != nil {
+			log.Println(err.Error())
+			http.Error(w, "Internal Server Error", 500)
+		}
+	} else if r.Method == http.MethodPost {
+		err := r.ParseForm()
+		if err != nil {
+			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+			return
+		}
+		email := r.PostForm.Get("email")
+		pass := r.PostForm.Get("pass")
+		user, err := app.MainModel.Login(email, pass)
+		fmt.Println("login user:", user)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		app.User = user
+		http.Redirect(w, r, fmt.Sprintf("/"), http.StatusSeeOther)
 
 	} else {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
