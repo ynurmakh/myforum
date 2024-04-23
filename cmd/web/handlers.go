@@ -2,10 +2,7 @@ package main
 
 import (
 	"fmt"
-<<<<<<< HEAD
-=======
-	"html/template"
->>>>>>> 0f52250f016ce46fd29a95ab3124442a0e228c0a
+	"forum/internal/models"
 	"log"
 	"net/http"
 	"path"
@@ -14,6 +11,7 @@ import (
 
 type TemplateData struct {
 	Data any
+	User models.User
 }
 
 func (app *Application) home(w http.ResponseWriter, r *http.Request) {
@@ -28,27 +26,14 @@ func (app *Application) home(w http.ResponseWriter, r *http.Request) {
 	}
 
 	posts := app.MainModel.GetPosts()
+	user, err := app.MainModel.GetUser(app.UserId)
+	if err != nil {
+		fmt.Println("user not found")
+	}
 	data := &TemplateData{
 		Data: posts,
+		User: user,
 	}
-<<<<<<< HEAD
-=======
-	// files := []string{
-	// 	"ui/html/base.html",
-	// 	"ui/html/partials/nav.html",
-	// 	"ui/html/pages/home.html",
-	// }
-
-	// tmpl, err := template.ParseFiles(files...)
-	// if err != nil {
-	// 	log.Println(err)
-	// }
-	// err = tmpl.ExecuteTemplate(w, "base", data)
-	// if err != nil {
-	// 	log.Println(err.Error())
-	// 	http.Error(w, "Internal Server Error", 500)
-	// }
->>>>>>> 0f52250f016ce46fd29a95ab3124442a0e228c0a
 	app.render(w, http.StatusOK, "home.html", data)
 }
 
@@ -66,15 +51,26 @@ func (app *Application) postView(w http.ResponseWriter, r *http.Request) {
 	}
 
 	post := app.MainModel.GetPost(id)
+	user, err := app.MainModel.GetUser(app.UserId)
+	if err != nil {
+		fmt.Println("user not found")
+	}
 	data := &TemplateData{
 		Data: post,
+		User: user,
 	}
 	app.render(w, http.StatusOK, "post-view.html", data)
 }
 
 func (app *Application) postCreate(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
-		data := &TemplateData{}
+		user, err := app.MainModel.GetUser(app.UserId)
+		if err != nil {
+			fmt.Println("user not found")
+		}
+		data := &TemplateData{
+			User: user,
+		}
 		app.render(w, http.StatusOK, "post-create.html", data)
 	} else if r.Method == http.MethodPost {
 		err := r.ParseForm()
@@ -94,7 +90,13 @@ func (app *Application) postCreate(w http.ResponseWriter, r *http.Request) {
 
 func (app *Application) login(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
-		data := &TemplateData{}
+		user, err := app.MainModel.GetUser(app.UserId)
+		if err != nil {
+			fmt.Println("user not found")
+		}
+		data := &TemplateData{
+			User: user,
+		}
 		app.render(w, http.StatusOK, "login.html", data)
 	} else if r.Method == http.MethodPost {
 		err := r.ParseForm()
@@ -104,13 +106,13 @@ func (app *Application) login(w http.ResponseWriter, r *http.Request) {
 		}
 		email := r.PostForm.Get("email")
 		pass := r.PostForm.Get("pass")
-		user, err := app.MainModel.Login(email, pass)
-		fmt.Println("login user:", user)
+		id, err := app.MainModel.Login(email, pass)
+		fmt.Println("login user ID:", id)
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
-		// app.User = user
+		app.UserId = id
 		http.Redirect(w, r, fmt.Sprintf("/"), http.StatusSeeOther)
 	} else {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)

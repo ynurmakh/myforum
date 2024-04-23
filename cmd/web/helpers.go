@@ -13,7 +13,7 @@ import (
 )
 
 func (app *Application) render(w http.ResponseWriter, status int, page string, data *TemplateData) {
-	ts, ok := app.templateCache[page]
+	ts, ok := app.TemplateCache[page]
 	if !ok {
 		err := fmt.Errorf("the template %s does not exist", page)
 		log.Println(err)

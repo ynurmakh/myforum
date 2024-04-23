@@ -13,7 +13,8 @@ import (
 
 type Application struct {
 	MainModel     models.MainModel
-	templateCache map[string]*template.Template
+	TemplateCache map[string]*template.Template
+	UserId        int
 }
 
 func main() {
@@ -27,7 +28,7 @@ func main() {
 	}
 	app := &Application{
 		MainModel:     models.MainModel{DB: openDB()},
-		templateCache: templateCache,
+		TemplateCache: templateCache,
 	}
 
 	log.Println("server started on http://localhost:" + port)
