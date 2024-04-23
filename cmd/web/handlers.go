@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"forum/internal/models"
 	"html/template"
 	"log"
 	"net/http"
@@ -11,7 +10,6 @@ import (
 )
 
 type TemplateData struct {
-	User models.User
 	Data any
 }
 
@@ -26,25 +24,25 @@ func (app *Application) home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	posts := app.MainModel.GetPosts()
-	data := TemplateData{
+	data := &TemplateData{
 		Data: posts,
 	}
-	files := []string{
-		"ui/html/base.html",
-		"ui/html/partials/nav.html",
-		"ui/html/pages/home.html",
-	}
+	// files := []string{
+	// 	"ui/html/base.html",
+	// 	"ui/html/partials/nav.html",
+	// 	"ui/html/pages/home.html",
+	// }
 
-	tmpl, err := template.ParseFiles(files...)
-	if err != nil {
-		log.Println(err)
-	}
-	fmt.Println("home user:", data.User)
-	err = tmpl.ExecuteTemplate(w, "base", data)
-	if err != nil {
-		log.Println(err.Error())
-		http.Error(w, "Internal Server Error", 500)
-	}
+	// tmpl, err := template.ParseFiles(files...)
+	// if err != nil {
+	// 	log.Println(err)
+	// }
+	// err = tmpl.ExecuteTemplate(w, "base", data)
+	// if err != nil {
+	// 	log.Println(err.Error())
+	// 	http.Error(w, "Internal Server Error", 500)
+	// }
+	app.render(w, http.StatusOK, "home.html", data)
 }
 
 func (app *Application) postView(w http.ResponseWriter, r *http.Request) {
@@ -146,7 +144,7 @@ func (app *Application) login(w http.ResponseWriter, r *http.Request) {
 			fmt.Println(err)
 			return
 		}
-		app.User = user
+		// app.User = user
 		http.Redirect(w, r, fmt.Sprintf("/"), http.StatusSeeOther)
 
 	} else {
