@@ -2,6 +2,10 @@ package main
 
 import (
 	"fmt"
+<<<<<<< HEAD
+=======
+	"html/template"
+>>>>>>> 0f52250f016ce46fd29a95ab3124442a0e228c0a
 	"log"
 	"net/http"
 	"path"
@@ -27,6 +31,24 @@ func (app *Application) home(w http.ResponseWriter, r *http.Request) {
 	data := &TemplateData{
 		Data: posts,
 	}
+<<<<<<< HEAD
+=======
+	// files := []string{
+	// 	"ui/html/base.html",
+	// 	"ui/html/partials/nav.html",
+	// 	"ui/html/pages/home.html",
+	// }
+
+	// tmpl, err := template.ParseFiles(files...)
+	// if err != nil {
+	// 	log.Println(err)
+	// }
+	// err = tmpl.ExecuteTemplate(w, "base", data)
+	// if err != nil {
+	// 	log.Println(err.Error())
+	// 	http.Error(w, "Internal Server Error", 500)
+	// }
+>>>>>>> 0f52250f016ce46fd29a95ab3124442a0e228c0a
 	app.render(w, http.StatusOK, "home.html", data)
 }
 
