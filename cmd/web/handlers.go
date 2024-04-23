@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-	"forum/internal/models"
-	"html/template"
 	"log"
 	"net/http"
 	"path"
@@ -11,7 +9,6 @@ import (
 )
 
 type TemplateData struct {
-	User models.User
 	Data any
 }
 
@@ -25,26 +22,12 @@ func (app *Application) home(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		return
 	}
+
 	posts := app.MainModel.GetPosts()
-	data := TemplateData{
+	data := &TemplateData{
 		Data: posts,
 	}
-	files := []string{
-		"ui/html/base.html",
-		"ui/html/partials/nav.html",
-		"ui/html/pages/home.html",
-	}
-
-	tmpl, err := template.ParseFiles(files...)
-	if err != nil {
-		log.Println(err)
-	}
-	fmt.Println("home user:", data.User)
-	err = tmpl.ExecuteTemplate(w, "base", data)
-	if err != nil {
-		log.Println(err.Error())
-		http.Error(w, "Internal Server Error", 500)
-	}
+	app.render(w, http.StatusOK, "home.html", data)
 }
 
 func (app *Application) postView(w http.ResponseWriter, r *http.Request) {
@@ -61,42 +44,16 @@ func (app *Application) postView(w http.ResponseWriter, r *http.Request) {
 	}
 
 	post := app.MainModel.GetPost(id)
-	files := []string{
-		"ui/html/base.html",
-		"ui/html/partials/nav.html",
-		"ui/html/pages/post-view.html",
+	data := &TemplateData{
+		Data: post,
 	}
-
-	tmpl, err := template.ParseFiles(files...)
-	if err != nil {
-		log.Println(err)
-	}
-
-	err = tmpl.ExecuteTemplate(w, "base", post)
-	if err != nil {
-		log.Println(err.Error())
-		http.Error(w, "Internal Server Error", 500)
-	}
+	app.render(w, http.StatusOK, "post-view.html", data)
 }
 
 func (app *Application) postCreate(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
-		files := []string{
-			"ui/html/base.html",
-			"ui/html/partials/nav.html",
-			"ui/html/pages/post-create.html",
-		}
-
-		tmpl, err := template.ParseFiles(files...)
-		if err != nil {
-			log.Println(err)
-		}
-
-		err = tmpl.ExecuteTemplate(w, "base", nil)
-		if err != nil {
-			log.Println(err.Error())
-			http.Error(w, "Internal Server Error", 500)
-		}
+		data := &TemplateData{}
+		app.render(w, http.StatusOK, "post-create.html", data)
 	} else if r.Method == http.MethodPost {
 		err := r.ParseForm()
 		if err != nil {
@@ -107,7 +64,6 @@ func (app *Application) postCreate(w http.ResponseWriter, r *http.Request) {
 		content := r.PostForm.Get("content")
 		id, err := app.MainModel.CreatePost(1, 1, title, content)
 		http.Redirect(w, r, fmt.Sprintf("/post/view/%d", id), http.StatusSeeOther)
-
 	} else {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		return
@@ -116,22 +72,8 @@ func (app *Application) postCreate(w http.ResponseWriter, r *http.Request) {
 
 func (app *Application) login(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
-		files := []string{
-			"ui/html/base.html",
-			"ui/html/partials/nav.html",
-			"ui/html/pages/login.html",
-		}
-
-		tmpl, err := template.ParseFiles(files...)
-		if err != nil {
-			log.Println(err)
-		}
-
-		err = tmpl.ExecuteTemplate(w, "base", nil)
-		if err != nil {
-			log.Println(err.Error())
-			http.Error(w, "Internal Server Error", 500)
-		}
+		data := &TemplateData{}
+		app.render(w, http.StatusOK, "login.html", data)
 	} else if r.Method == http.MethodPost {
 		err := r.ParseForm()
 		if err != nil {
@@ -146,9 +88,8 @@ func (app *Application) login(w http.ResponseWriter, r *http.Request) {
 			fmt.Println(err)
 			return
 		}
-		app.User = user
+		// app.User = user
 		http.Redirect(w, r, fmt.Sprintf("/"), http.StatusSeeOther)
-
 	} else {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		return

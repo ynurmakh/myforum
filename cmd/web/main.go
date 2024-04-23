@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"flag"
 	"forum/internal/models"
+	"html/template"
 	"log"
 	"net/http"
 
@@ -11,8 +12,8 @@ import (
 )
 
 type Application struct {
-	MainModel models.MainModel
-	User      models.User
+	MainModel     models.MainModel
+	templateCache map[string]*template.Template
 }
 
 func main() {
@@ -20,8 +21,13 @@ func main() {
 	flag.StringVar(&port, "p", "8080", "port")
 	flag.Parse()
 
+	templateCache, err := newTemplateCache()
+	if err != nil {
+		log.Fatal(err)
+	}
 	app := &Application{
-		MainModel: models.MainModel{DB: openDB()},
+		MainModel:     models.MainModel{DB: openDB()},
+		templateCache: templateCache,
 	}
 
 	log.Println("server started on http://localhost:" + port)
