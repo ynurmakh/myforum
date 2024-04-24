@@ -113,7 +113,7 @@ func (app *Application) login(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		app.UserId = id
-		http.Redirect(w, r, fmt.Sprintf("/"), http.StatusSeeOther)
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 	} else {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		return
@@ -123,7 +123,35 @@ func (app *Application) login(w http.ResponseWriter, r *http.Request) {
 func (app *Application) logout(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
 		app.UserId = 0
-		http.Redirect(w, r, fmt.Sprintf("/"), http.StatusSeeOther)
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+	} else {
+		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+		return
+	}
+}
+
+func (app *Application) signup(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodGet {
+		data := &TemplateData{}
+		app.render(w, http.StatusOK, "signup.html", data)
+	} else if r.Method == http.MethodPost {
+		err := r.ParseForm()
+		if err != nil {
+			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+			return
+		}
+		name := r.PostForm.Get("name")
+		email := r.PostForm.Get("email")
+		pass := r.PostForm.Get("pass")
+		passConfirm := r.PostForm.Get("pass-confirm")
+		id, err := app.MainModel.CreateUser(name, email, pass)
+		fmt.Println("create user:", id, name, email, pass, passConfirm)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 	} else {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		return

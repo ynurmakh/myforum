@@ -1,0 +1,15 @@
+{{define "main-styles"}}
+<link rel='stylesheet' href='/static/css/signup.css'>
+{{end}}
+
+{{define "main"}}
+<div class="login">
+    <form class="form" action="/user/signup" method="post">
+        <input type="text" name="name">
+        <input type="text" name="email">
+        <input type="text" name="pass">
+        <input type="text" name="pass-confirm">
+        <input type="submit" value="confirm">
+    </form>
+</div>
+{{end}}

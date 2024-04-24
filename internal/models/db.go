@@ -89,7 +89,6 @@ func (m *MainModel) GetPost(id int) Post {
 func (m *MainModel) CreatePost(user_id, category_id int, title, content string) (int64, error) {
 	insertSQL := `INSERT INTO posts (user_id, category_id, title, content, created_at) VALUES (?,?,?,?, current_timestamp)`
 	res, err := m.DB.Exec(insertSQL, user_id, category_id, title, content)
-	fmt.Println(res)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -142,4 +141,17 @@ func (m *MainModel) GetUser(id int) (User, error) {
 
 	user.Username = name
 	return user, nil
+}
+
+func (m *MainModel) CreateUser(name, email, pass string) (int64, error) {
+	insertSQL := `INSERT INTO users (username, email, password_hash, created_at) VALUES (?,?,?, current_timestamp)`
+	res, err := m.DB.Exec(insertSQL, name, email, pass)
+	if err != nil {
+		return 0, err
+	}
+	id, err := res.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+	return id, nil
 }
