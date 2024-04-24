@@ -10,8 +10,9 @@ import (
 )
 
 type TemplateData struct {
-	Data any
-	User models.User
+	Data     any
+	User     models.User
+	PageName string
 }
 
 func (app *Application) home(w http.ResponseWriter, r *http.Request) {

@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"path/filepath"
+	"strings"
 	"time"
 )
 
@@ -19,6 +20,9 @@ func (app *Application) render(w http.ResponseWriter, status int, page string, d
 		log.Println(err)
 		return
 	}
+
+	pageName := strings.Split(page, ".")[0]
+	data.PageName = pageName
 
 	buf := new(bytes.Buffer)
 
