@@ -119,3 +119,13 @@ func (app *Application) login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+func (app *Application) logout(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodPost {
+		app.UserId = 0
+		http.Redirect(w, r, fmt.Sprintf("/"), http.StatusSeeOther)
+	} else {
+		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+		return
+	}
+}

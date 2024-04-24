@@ -2,9 +2,10 @@
 - add users
 - good login handler, struct
 - error page
-- logout
 - signup
 - app schema for eng from youtube video
+- remake markup to components
+- logout
 
 + cash template
 + read networks article
