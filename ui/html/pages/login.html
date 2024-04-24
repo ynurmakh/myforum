@@ -1,9 +1,12 @@
 {{define "main"}}
 <div class="login">
+    <h2>Login</h2>
     <form class="form" action="/user/login" method="post">
-        <input type="text" name="email">
-        <input type="text" name="pass">
-        <input type="submit" value="login">
+        <label class="label" for="email">Email</label>
+        <input class="input" type="text" name="email">
+        <label class="label" for="pass">Password</label>
+        <input class="input" type="text" name="pass">
+        <input class="btn submit" type="submit" value="Login">
     </form>
 </div>
 {{end}}

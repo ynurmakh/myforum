@@ -18,6 +18,10 @@ a {
     text-decoration: none;
 }
 
+h2 {
+    margin: 50px 20px 30px;
+}
+
 .header {
     display: flex;
     border-bottom: 1px solid grey;
@@ -27,30 +31,60 @@ a {
 .header h1 {
     margin: 10px 0;
 }
+
 .nav {
     display: flex;
     justify-content: end;
     align-items: center;
     flex-grow: 1;
 }
-.nav a {
-    padding: 10px 20px;
-    margin-left: 20px;
-    background-color: rgb(225, 240, 240);
-    border: 1px solid rgba(128, 128, 128, 0);
-    transition: .3s;
-}
 
-.nav a:hover {
-    background: rgb(215, 240, 240);
-    padding: 14px 20px;
-    border-radius: 5%;
-    border-left: 1px solid grey;
-    border-right: 1px solid grey;
+.nav a,
+.logout {
+    margin-left: 20px;
 }
 
 .main {
     width: 80%;
     min-width: 600px;
+    max-width: 800px;
     margin: 0 auto;
+}
+
+.btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: fit-content;
+    padding: 10px 20px;
+
+    font: 16px monospace;
+    color: inherit;
+    cursor: pointer;
+
+    background-color: rgb(225, 240, 240);
+    border: 1px solid white;
+    border-top-width: 4px;
+    border-bottom-width: 4px;
+    transition: border .3s;
+}
+
+.btn:hover {
+    background: rgb(215, 240, 240);
+    border-left: 1px solid grey;
+    border-right: 1px solid grey;
+}
+
+.label {
+    display: block;
+    text-transform: uppercase;
+}
+
+.input,
+.textarea {
+    display: block;
+    outline: none;
+    padding: 5px 20px;
+    border: none;
+    background-color: rgb(210, 240, 240, .5);
 }

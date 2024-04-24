@@ -1,11 +1,16 @@
 {{define "main"}}
 <div class="login">
+    <h2>Registration</h2>
     <form class="form" action="/user/signup" method="post">
-        <input type="text" name="name">
-        <input type="text" name="email">
-        <input type="text" name="pass">
-        <input type="text" name="pass-confirm">
-        <input type="submit" value="confirm">
+        <label class="label" for="label">Name</label>
+        <input class="input" type="text" name="name" required>
+        <label class="label" for="label">Email</label>
+        <input class="input" type="text" name="email" required>
+        <label class="label" for="label">Password</label>
+        <input class="input" type="text" name="pass" required>
+        <label class="label" for="label">Confirm Password</label>
+        <input class="input" type="text" name="pass-confirm" required>
+        <input class="btn" type="submit" value="Confirm">
     </form>
 </div>
 {{end}}

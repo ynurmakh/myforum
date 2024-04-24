@@ -3,8 +3,8 @@
 - good login handler, struct
 - error page
 - app schema for eng from youtube video
-- remake markup to components
 
++ remake markup to components
 + signup
 + logout
 + cash template

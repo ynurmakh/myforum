@@ -1,11 +1,12 @@
 {{define "main"}}
 <div class="post-create">
+    <h2>Create Post</h2>
     <form class="form" action="/post/create" method="post">
-        <label for="title">Title</label>
-        <input class="title-input" id="title" type="text" name="title" required>
-        <label for="title">Content</label>
-        <textarea class="content-input" name="content" required></textarea>
-        <input class="submit" type="submit" value="create">
+        <label class="label" for="label">Title</label>
+        <input class="input" id="title" type="text" name="title" required>
+        <label class="label" for="label">Content</label>
+        <textarea class="textarea content-input" name="content" required></textarea>
+        <button class="btn submit">Create</button>
     </form>
 </div>
 {{end}}
