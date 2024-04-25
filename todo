@@ -1,9 +1,12 @@
 - Entity Relationship Diagram (ERD)
-- add users
 - good login handler, struct
-- error page
 - app schema for eng from youtube video
+- clear db
+- full post
+- another errors
 
++ error page
++ add users
 + remake markup to components
 + signup
 + logout

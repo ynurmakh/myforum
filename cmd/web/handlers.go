@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"forum/internal/models"
-	"log"
 	"net/http"
 	"path"
 	"strconv"
@@ -17,8 +16,7 @@ type TemplateData struct {
 
 func (app *Application) home(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
-		log.Println("not found")
-		http.NotFound(w, r)
+		app.notFound(w)
 		return
 	}
 	if r.Method != http.MethodGet {

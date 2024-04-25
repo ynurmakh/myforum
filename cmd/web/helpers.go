@@ -76,3 +76,7 @@ func newTemplateCache() (map[string]*template.Template, error) {
 
 	return cache, nil
 }
+
+func (app *Application) notFound(w http.ResponseWriter) {
+	app.render(w, http.StatusNotFound, "notfound.html", &TemplateData{Data: "Page Not Found"})
+}
