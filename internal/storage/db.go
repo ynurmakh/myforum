@@ -1,4 +1,4 @@
-package models
+package storage
 
 import (
 	"database/sql"
@@ -9,6 +9,13 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
+type StorageInterface interface {
+	Moo()
+	Foo()
+	Doo()
+}
+
+// there only interface for db
 type MainModel struct {
 	DB *sql.DB
 }
@@ -49,6 +56,7 @@ type Like struct {
 	UserID int `db:"user_id"`
 }
 
+// Рализация методов в папке с методами
 func (m *MainModel) GetPosts() []Post {
 	result := []Post{}
 

@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"forum/internal/models"
+	"forum/internal/storage"
 	"net/http"
 	"path"
 	"strconv"
@@ -10,7 +10,7 @@ import (
 
 type TemplateData struct {
 	Data     any
-	User     models.User
+	User     storage.User
 	PageName string
 }
 

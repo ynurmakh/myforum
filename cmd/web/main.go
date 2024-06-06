@@ -3,7 +3,7 @@ package main
 import (
 	"database/sql"
 	"flag"
-	"forum/internal/models"
+	"forum/internal/storage"
 	"html/template"
 	"log"
 	"net/http"
@@ -12,7 +12,7 @@ import (
 )
 
 type Application struct {
-	MainModel     models.MainModel
+	MainModel     storage.MainModel
 	TemplateCache map[string]*template.Template
 	UserId        int
 }
@@ -27,7 +27,7 @@ func main() {
 		log.Fatal(err)
 	}
 	app := &Application{
-		MainModel:     models.MainModel{DB: openDB()},
+		MainModel:     storage.MainModel{DB: openDB()},
 		TemplateCache: templateCache,
 	}
 
@@ -36,7 +36,7 @@ func main() {
 }
 
 func openDB() *sql.DB {
-	db, err := sql.Open("sqlite3", "internal/models/database.db")
+	db, err := sql.Open("sqlite3", "internal/storage/database.db")
 	if err != nil {
 		log.Fatal(err)
 	}
