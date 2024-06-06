@@ -2,10 +2,10 @@ package internal
 
 import (
 	"fmt"
-
-	businessrealiz "forum/internal/business/businessRealiz"
 	"forum/internal/storage/sqlite3"
 	"forum/internal/transport/http"
+
+	businessrealiz "forum/internal/business/businessRealiz"
 )
 
 func Run() error {
@@ -25,7 +25,6 @@ func Run() error {
 	if err != nil {
 		return err
 	}
-	_ = transport
 
 	fmt.Println("Server START")
 	err = transport.Start()

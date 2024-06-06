@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-func (app *App) CookiesMiddlware(next http.HandlerFunc) http.HandlerFunc {
+func (t *Transport) CookiesMiddlware(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		allCookies := r.Cookies()
 		sessionCookie := &http.Cookie{}
@@ -18,10 +18,10 @@ func (app *App) CookiesMiddlware(next http.HandlerFunc) http.HandlerFunc {
 		}
 
 		fmt.Println(sessionCookie.MaxAge)
-		fmt.Println(app.Configs.CookiesMaxAge)
+		fmt.Println(t.Configs.CookiesMaxAge)
 
 		if sessionCookie.Name == "session" {
-			sessionCookie.MaxAge = app.Configs.CookiesMaxAge
+			sessionCookie.MaxAge = t.Configs.CookiesMaxAge
 			http.SetCookie(w, sessionCookie)
 			fmt.Println("Update old cookie")
 			return
@@ -32,7 +32,7 @@ func (app *App) CookiesMiddlware(next http.HandlerFunc) http.HandlerFunc {
 			http.SetCookie(w, &http.Cookie{
 				Name:   "session",
 				Value:  "erbol",
-				MaxAge: app.Configs.CookiesMaxAge,
+				MaxAge: t.Configs.CookiesMaxAge,
 			})
 
 			fmt.Println("Set new cookie")

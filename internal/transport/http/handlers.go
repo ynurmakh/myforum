@@ -1,22 +1,24 @@
-package main
+package http
 
 import (
+	"bytes"
 	"fmt"
-	"forum/internal/storage"
+	"log"
 	"net/http"
 	"path"
 	"strconv"
+	"strings"
 )
 
 type TemplateData struct {
-	Data     any
-	User     storage.User
+	Data     interface{}
+	User     interface{}
 	PageName string
 }
 
-func (app *Application) home(w http.ResponseWriter, r *http.Request) {
+func (t *Transport) home(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
-		app.notFound(w)
+		t.notFound(w)
 		return
 	}
 	if r.Method != http.MethodGet {
@@ -24,8 +26,8 @@ func (app *Application) home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	posts := app.MainModel.GetPosts()
-	user, err := app.MainModel.GetUser(app.UserId)
+	posts := t.service.GetPosts()
+	user, err := t.service.GetUser()
 	if err != nil {
 		fmt.Println("user not found")
 	}
@@ -33,10 +35,10 @@ func (app *Application) home(w http.ResponseWriter, r *http.Request) {
 		Data: posts,
 		User: user,
 	}
-	app.render(w, http.StatusOK, "home.html", data)
+	t.render(w, http.StatusOK, "home.html", data)
 }
 
-func (app *Application) postView(w http.ResponseWriter, r *http.Request) {
+func (t *Transport) postView(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		return
@@ -49,8 +51,8 @@ func (app *Application) postView(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	post := app.MainModel.GetPost(id)
-	user, err := app.MainModel.GetUser(app.UserId)
+	post := t.service.GetPosts()
+	user, err := t.service.GetUser()
 	if err != nil {
 		fmt.Println("user not found")
 	}
@@ -58,28 +60,28 @@ func (app *Application) postView(w http.ResponseWriter, r *http.Request) {
 		Data: post,
 		User: user,
 	}
-	app.render(w, http.StatusOK, "post-view.html", data)
+	t.render(w, http.StatusOK, "post-view.html", data)
 }
 
-func (app *Application) postCreate(w http.ResponseWriter, r *http.Request) {
+func (t *Transport) postCreate(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
-		user, err := app.MainModel.GetUser(app.UserId)
+		user, err := t.service.GetUser()
 		if err != nil {
 			fmt.Println("user not found")
 		}
 		data := &TemplateData{
 			User: user,
 		}
-		app.render(w, http.StatusOK, "post-create.html", data)
+		t.render(w, http.StatusOK, "post-create.html", data)
 	} else if r.Method == http.MethodPost {
 		err := r.ParseForm()
 		if err != nil {
 			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 			return
 		}
-		title := r.PostForm.Get("title")
-		content := r.PostForm.Get("content")
-		id, err := app.MainModel.CreatePost(1, 1, title, content)
+		// title := r.PostForm.Get("title")
+		// content := r.PostForm.Get("content")
+		id, err := t.service.CreatePost()
 		http.Redirect(w, r, fmt.Sprintf("/post/view/%d", id), http.StatusSeeOther)
 	} else {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
@@ -87,31 +89,31 @@ func (app *Application) postCreate(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (app *Application) login(w http.ResponseWriter, r *http.Request) {
+func (t *Transport) login(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
-		user, err := app.MainModel.GetUser(app.UserId)
+		user, err := t.service.GetUser()
 		if err != nil {
 			fmt.Println("user not found")
 		}
 		data := &TemplateData{
 			User: user,
 		}
-		app.render(w, http.StatusOK, "login.html", data)
+		t.render(w, http.StatusOK, "login.html", data)
 	} else if r.Method == http.MethodPost {
 		err := r.ParseForm()
 		if err != nil {
 			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 			return
 		}
-		email := r.PostForm.Get("email")
-		pass := r.PostForm.Get("pass")
-		id, err := app.MainModel.Login(email, pass)
+		// email := r.PostForm.Get("email")
+		// pass := r.PostForm.Get("pass")
+		id, err := t.service.Login()
 		fmt.Println("login user ID:", id)
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
-		app.UserId = id
+		// t.UserId = id
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 	} else {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
@@ -119,9 +121,9 @@ func (app *Application) login(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (app *Application) logout(w http.ResponseWriter, r *http.Request) {
+func (t *Transport) logout(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
-		app.UserId = 0
+		// t.UserId = 0
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 	} else {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
@@ -129,10 +131,10 @@ func (app *Application) logout(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (app *Application) signup(w http.ResponseWriter, r *http.Request) {
+func (t *Transport) signup(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
 		data := &TemplateData{}
-		app.render(w, http.StatusOK, "signup.html", data)
+		t.render(w, http.StatusOK, "signup.html", data)
 	} else if r.Method == http.MethodPost {
 		err := r.ParseForm()
 		if err != nil {
@@ -143,7 +145,7 @@ func (app *Application) signup(w http.ResponseWriter, r *http.Request) {
 		email := r.PostForm.Get("email")
 		pass := r.PostForm.Get("pass")
 		passConfirm := r.PostForm.Get("pass-confirm")
-		id, err := app.MainModel.CreateUser(name, email, pass)
+		id, err := t.service.CreateUser()
 		fmt.Println("create user:", id, name, email, pass, passConfirm)
 		if err != nil {
 			fmt.Println(err)
@@ -155,4 +157,32 @@ func (app *Application) signup(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		return
 	}
+}
+
+func (t *Transport) render(w http.ResponseWriter, status int, page string, data *TemplateData) {
+	ts, ok := t.templateCache[page]
+	if !ok {
+		err := fmt.Errorf("the template %s does not exist", page)
+		log.Println(err)
+		return
+	}
+
+	pageName := strings.Split(page, ".")[0]
+	data.PageName = pageName
+
+	buf := new(bytes.Buffer)
+
+	err := ts.ExecuteTemplate(buf, "base", data)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	w.WriteHeader(status)
+
+	buf.WriteTo(w)
+}
+
+func (t *Transport) notFound(w http.ResponseWriter) {
+	t.render(w, http.StatusNotFound, "notfound.html", &TemplateData{Data: "Page Not Found"})
 }
