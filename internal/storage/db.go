@@ -10,10 +10,27 @@ import (
 )
 
 type StorageInterface interface {
-	Moo()
 	Foo()
-	Doo()
+	// Auth
+	// Cookies
 }
+
+// type Auth interface {
+// 	//                                                    User.UserID, nickname
+// 	GetUserByEmailAndPass(email string, hashed_pa ssword string) (nickname string, error)
+// 	GetUserbyThirdpart(email string ) (nickname string, error)
+
+// 	//                           Yes\no
+// 	IsExistByEmail(email string) (bool, error)
+// 	//                                                created / no
+// 	InsertNewUserByEmailAndPass(email, password string) (bool, error)
+// 	//
+// 	TieCookieToUser(UserID int)
+// }
+
+// type Cookies interface {
+// 	InsertNewCookieID(cooks string, date string)
+// }
 
 // there only interface for db
 type MainModel struct {

@@ -2,27 +2,31 @@ package http
 
 import (
 	"flag"
-	"forum/internal/business"
-	businessrealiz "forum/internal/business/businessRealiz"
-	"forum/internal/transport"
-	"forum/ui"
 	"html/template"
 	"io/fs"
 	"log"
 	"net/http"
+	"os"
 	"path/filepath"
 	"time"
+
+	"forum/internal/business"
+	businessrealiz "forum/internal/business/businessRealiz"
+	"forum/internal/transport"
+	"forum/ui"
+
+	"gopkg.in/yaml.v2"
 )
 
 type Transport struct {
 	service       businessrealiz.Service
 	port          string
 	templateCache map[string]*template.Template
-	Configs       conf
+	configs       *configType
 }
 
-type conf struct {
-	CookiesMaxAge int
+type configType struct {
+	CookiesMaxAge int `yaml:"CookieMaxAge"`
 }
 
 func InitTransport(b business.Business) (transport.Transport, error) {
@@ -35,7 +39,12 @@ func InitTransport(b business.Business) (transport.Transport, error) {
 	}
 	t.templateCache = templateCache
 
-	// todo kek
+	conff, err := confogParce()
+	if err != nil {
+		return nil, err
+	}
+	t.configs = conff
+
 	log.Println("server started on http://localhost:" + t.port)
 	err = http.ListenAndServe(":"+t.port, t.routes())
 	if err != nil {
@@ -83,4 +92,17 @@ func humanDate(t time.Time) string {
 
 var functions = template.FuncMap{
 	"humanDate": humanDate,
+}
+
+func confogParce() (*configType, error) {
+	c := &configType{}
+	file, err := os.ReadFile("./internal/transport/http/config.yaml")
+	if err != nil {
+		return nil, err
+	}
+	err = yaml.Unmarshal(file, c)
+	if err != nil {
+		return nil, err
+	}
+	return c, nil
 }

@@ -12,6 +12,7 @@ restart:
 	make rund 
 
 push:
+	rm -r -f vendor
 	git add .
 	git commit -m "$(m)"
 	git push 

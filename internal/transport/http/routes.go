@@ -10,12 +10,12 @@ func (t *Transport) routes() *http.ServeMux {
 	mux.Handle("/static/", http.StripPrefix("/static", fileServer))
 
 	// mux.Handle("/protected", sessionMiddleware(http.HandlerFunc(protectedRoute)))
-	mux.HandleFunc("/", t.home)
-	mux.HandleFunc("/post/view/", t.postView)
-	mux.HandleFunc("/post/create", t.postCreate)
-	mux.HandleFunc("/user/signup", t.signup)
-	mux.HandleFunc("/user/login", t.login)
-	mux.HandleFunc("/user/logout", t.logout)
+	mux.HandleFunc("/", t.CookiesMiddlware(t.home))
+	mux.HandleFunc("/post/view/", t.CookiesMiddlware(t.postView))
+	mux.HandleFunc("/post/create", t.CookiesMiddlware(t.postCreate))
+	mux.HandleFunc("/user/signup", t.CookiesMiddlware(t.signup))
+	mux.HandleFunc("/user/login", t.CookiesMiddlware(t.login))
+	mux.HandleFunc("/user/logout", t.CookiesMiddlware(t.logout))
 
 	return mux
 }
