@@ -9,12 +9,9 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-type StorageInterface interface {
-	// Cookies
-
+type StorageInterface interface { // Cookies
 	// Registration
 	// Login
-
 	// Posts
 	// Reactions
 }
@@ -94,15 +91,23 @@ type Like struct {
 	UserID int `db:"user_id"`
 }
 
+func OpenDB() *sql.DB {
+	db, err := sql.Open("sqlite3", "internal/storage/oldDB/database.db")
+	if err != nil {
+		fmt.Println(err)
+	}
+	return db
+}
+
 // Рализация методов в папке с методами
-func (m *MainModel) GetPosts() []Post {
+func (m *MainModel) GetPosts() ([]Post, error) {
 	result := []Post{}
 
 	query := `SELECT * FROM posts`
 	rows, err := m.DB.Query(query)
 	if err != nil {
 		fmt.Println(err)
-		return result
+		return result, err
 	}
 	defer rows.Close()
 
@@ -111,14 +116,14 @@ func (m *MainModel) GetPosts() []Post {
 		err = rows.Scan(&post.PostID, &post.UserID, &post.CategoryID, &post.Title, &post.Content, &post.CreatedAt)
 		if err != nil {
 			fmt.Println(err)
-			return result
+			return result, err
 		}
 		result = append(result, post)
 	}
-	return result
+	return result, nil
 }
 
-func (m *MainModel) GetPost(id int) Post {
+func (m *MainModel) GetPost(id int) (Post, error) {
 	query := "SELECT * FROM posts WHERE post_id = ?"
 	row := m.DB.QueryRow(query, id)
 
@@ -127,9 +132,9 @@ func (m *MainModel) GetPost(id int) Post {
 	err := row.Scan(&post.PostID, &post.UserID, &post.CategoryID, &post.Title, &post.Content, &post.CreatedAt)
 	if err != nil {
 		fmt.Println(err)
-		return post
+		return post, nil
 	}
-	return post
+	return post, nil
 }
 
 func (m *MainModel) CreatePost(user_id, category_id int, title, content string) (int64, error) {

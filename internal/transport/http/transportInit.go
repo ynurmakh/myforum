@@ -2,6 +2,9 @@ package http
 
 import (
 	"flag"
+	"forum/internal/business"
+	"forum/internal/transport"
+	"forum/ui"
 	"html/template"
 	"io/fs"
 	"log"
@@ -10,19 +13,15 @@ import (
 	"path/filepath"
 	"time"
 
-	"forum/internal/business"
-	businessrealiz "forum/internal/business/businessRealiz"
-	"forum/internal/transport"
-	"forum/ui"
-
 	"gopkg.in/yaml.v2"
 )
 
 type Transport struct {
-	service       businessrealiz.Service
+	service       business.Business
 	port          string
 	templateCache map[string]*template.Template
 	configs       *configType
+	UserId        int
 }
 
 type configType struct {
@@ -33,17 +32,20 @@ func InitTransport(b business.Business) (transport.Transport, error) {
 	var t Transport
 	flag.StringVar(&t.port, "p", "8080", "port")
 	flag.Parse()
+
+	t.service = b
+
 	templateCache, err := newTemplateCache()
 	if err != nil {
 		return nil, err
 	}
 	t.templateCache = templateCache
 
-	conff, err := confogParce()
+	conf, err := configParce()
 	if err != nil {
 		return nil, err
 	}
-	t.configs = conff
+	t.configs = conf
 
 	log.Println("server started on http://localhost:" + t.port)
 	err = http.ListenAndServe(":"+t.port, t.routes())
@@ -94,7 +96,7 @@ var functions = template.FuncMap{
 	"humanDate": humanDate,
 }
 
-func confogParce() (*configType, error) {
+func configParce() (*configType, error) {
 	c := &configType{}
 	file, err := os.ReadFile("./internal/transport/http/config.yaml")
 	if err != nil {
