@@ -1,6 +1,9 @@
 package business
 
-import "forum/internal/storage"
+import (
+	"forum/internal/models"
+	"forum/internal/storage"
+)
 
 type Business interface {
 	GetPosts() ([]storage.Post, error)
@@ -10,4 +13,6 @@ type Business interface {
 	Exists(id int) (bool, error)
 	GetUser(id int) (storage.User, error)
 	CreateUser(name, email, pass string) (int64, error)
+	GetUserByCookiesValues(sessionValue string) (*models.User, error)
+	GetNewCookie() (string, error)
 }

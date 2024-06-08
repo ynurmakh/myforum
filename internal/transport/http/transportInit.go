@@ -2,9 +2,6 @@ package http
 
 import (
 	"flag"
-	"forum/internal/business"
-	"forum/internal/transport"
-	"forum/ui"
 	"html/template"
 	"io/fs"
 	"log"
@@ -12,6 +9,11 @@ import (
 	"os"
 	"path/filepath"
 	"time"
+
+	"forum/internal/business"
+	"forum/internal/models"
+	"forum/internal/transport"
+	"forum/ui"
 
 	"gopkg.in/yaml.v2"
 )
@@ -22,6 +24,7 @@ type Transport struct {
 	templateCache map[string]*template.Template
 	configs       *configType
 	UserId        int
+	User          *models.User
 }
 
 type configType struct {

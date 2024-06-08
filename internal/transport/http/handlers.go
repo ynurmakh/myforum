@@ -26,6 +26,8 @@ func (t *Transport) home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	fmt.Printf("Hello %v from handler", t.User.Email)
+
 	posts, err := t.service.GetPosts()
 	if err != nil {
 		fmt.Println("posts not found")
