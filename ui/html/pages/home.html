@@ -6,12 +6,12 @@
         {{range .Data}}
         <li class="post-item">
             <h3 class="title">
-                <a href="/post/view/{{.PostID}}">
-                    {{.Title}}
+                <a href="/post/view/{{.Post_ID}}">
+                    {{.Post_Title}}
                 </a>
             </h3>
             <p>
-                {{.Content}}
+                {{.Post_Content}}
             </p>
         </li>
         {{end}}
