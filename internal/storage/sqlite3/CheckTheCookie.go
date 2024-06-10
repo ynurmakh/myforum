@@ -11,11 +11,7 @@ import (
 func (s *Sqlite) CheckTheCookie(cookie string, expireTime int) (*models.User, error) {
 	// selct
 
-	row, err := s.db.Query(`SELECT * FROM cookies WHERE cookie = ?`, cookie)
-	if err != nil {
-		return nil, err
-	}
-	defer row.Close()
+	row := s.db.QueryRow(`SELECT * FROM cookies WHERE cookie = ?`, cookie)
 
 	var cookieRow struct {
 		Cookie   string    `db:"cookie"`
@@ -23,7 +19,7 @@ func (s *Sqlite) CheckTheCookie(cookie string, expireTime int) (*models.User, er
 		DeadTime time.Time `db:"deadTime"`
 	}
 
-	err = row.Scan(&cookieRow.Cookie, &cookieRow.User_ID, &cookieRow.DeadTime)
+	err := row.Scan(&cookieRow.Cookie, &cookieRow.User_ID, &cookieRow.DeadTime)
 	if err != nil {
 		return nil, err
 	}
