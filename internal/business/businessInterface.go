@@ -41,4 +41,7 @@ type _Posts interface {
 	// categories []string{} должен содержать по каким категориям отсортировать посты
 	//  Пустой categories вернет все посты несмотря на категорий
 	GetPostsForHome(pageNum, onPage int, categories []string) (*[]models.Post, error)
+
+	//
+	GetPost(post_id int) (*models.Post, error)
 }
