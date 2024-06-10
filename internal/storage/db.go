@@ -6,21 +6,23 @@ import (
 	"fmt"
 	"time"
 
+	"forum/internal/models"
+
 	_ "github.com/mattn/go-sqlite3"
 )
 
-type StorageInterface interface { // Cookies
-	// Registration
-	// Login
+type StorageInterface interface {
+	// UserRegistration
+	Cookies
 	// Posts
-	// Reactions
+	// UserLogin
 }
 
 type UserLogin interface {
 	// Сервис отдает БД email юзера.
 	//  Если пароль который отправил сервис являееться "GUARANTEED" то сторона storage его не проверяет.
 	// А если пароль не "GUARANTEED", то storage проверит совпадение пароля и вернят *User только если верно, иначе nil, nil
-	GetUserByEmailAndPass(email string, hashed_password string) (*User, error)
+	GetUserByEmailAndPass(email string, hashed_password string) (*models.User, error)
 }
 
 type UserRegistration interface {
@@ -36,7 +38,7 @@ type Cookies interface {
 	// Service отправляет storage UUID и userEmail и storage привязывает за UUID данного user`а
 	TieCookieToUser(UserID int, UUID string) (bool, error)
 	// Service отправляет storage UUID кукиса и storage возврашает какой юзер закреплен за данным UUID. Если UUID не сущ. в БД то создаст его и вернет nil,nil. Данный метод автоматический продливает жизннь UUID до time.Now() + expireTime
-	CheckTheCookie(cookie string, expireTime int) (*User, error)
+	CheckTheCookie(cookie string, expireTime int) (*models.User, error)
 	// Service отправляет storage UUID кукиса и storage открепляет user`а за данным UUID
 	KillCookie(UUID string) (bool, error)
 }

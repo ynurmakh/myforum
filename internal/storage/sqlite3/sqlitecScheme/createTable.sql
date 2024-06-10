@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS users (
     hashed_password VARCHAR(64)
     );
 CREATE TABLE IF NOT EXISTS cookies (
-    cookie VARCHAR(16) NOT NULL PRIMARY KEY,
+    cookie VARCHAR(56) NOT NULL PRIMARY KEY,
     user_id INTEGER NOT NULL,
     deadTime TIMESTAMP NOT NULL
     );

@@ -7,6 +7,7 @@ import (
 
 	_ "github.com/mattn/go-sqlite3"
 
+	"forum/internal/models"
 	"forum/internal/storage"
 )
 
@@ -56,6 +57,10 @@ type PragmasStruct struct {
 	notnull     int64
 	default_    sql.NullString
 	primary_key string
+}
+
+func (s *Sqlite) GetUserByEmailAndPass(email string, hashed_password string) (*models.User, error) {
+	return nil, nil
 }
 
 func (s *Sqlite) checkScheme() error {

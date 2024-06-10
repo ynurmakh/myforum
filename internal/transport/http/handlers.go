@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"path"
 	"strconv"
 	"strings"
@@ -17,6 +18,9 @@ type TemplateData struct {
 }
 
 func (t *Transport) home(w http.ResponseWriter, r *http.Request) {
+	fmt.Println(t.service.CreateNewCookie())
+	os.Exit(1)
+
 	if r.URL.Path != "/" {
 		t.notFound(w)
 		return
