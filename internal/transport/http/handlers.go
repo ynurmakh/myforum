@@ -31,7 +31,7 @@ func (t *Transport) home(w http.ResponseWriter, r *http.Request) {
 
 	// fmt.Printf("Hello %v from handler", t.User.Email)
 
-	posts, err := t.service.GetPostsForHome(0, 0, []string{})
+	// posts, err := t.service.GetPostsForHome(0, 0, []string{})
 	if err != nil {
 		fmt.Println("posts not found")
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)

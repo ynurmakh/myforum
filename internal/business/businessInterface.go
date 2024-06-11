@@ -5,19 +5,17 @@ import (
 )
 
 type Business interface {
-	GetUserByCookiesValues(sessionValue string) (*models.User, error)
-	GetNewCookie() (string, error)
 	_Cookie
-	_Posts
+	// _Posts
 }
 
 type _Cookie interface {
 	// transport запрашивает у service новый uuid если у клиента нет кукиса
 	CreateNewCookie() (string, error)
 	// transport запрашивает у service прикриплен ли user под данным cookie
-	// GetUserByCookie(sessionValue string) (*models.User, error)
-	// transport запрашивает у service
-	// DeregisterByCookieValue(sessionValue string) (bool, error)
+	GetUserByCookie(sessionValue string) (*models.User, error)
+	// transport запрашивает у service отвязать юзера от этого куки
+	DeregisterByCookieValue(sessionValue string) (bool, error)
 }
 
 type _Registration interface {

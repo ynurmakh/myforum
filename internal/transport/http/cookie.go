@@ -9,59 +9,59 @@ import (
 
 func (t *Transport) CookiesMiddlware(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		sessionCookie, err := r.Cookie("session")
-		if err != nil {
+		// sessionCookie, err := r.Cookie("session")
+		// if err != nil {
 
-			fmt.Println("ERRR:>>>>>>>>>", err)
-			// todo create new cookie for this user
+		// 	fmt.Println("ERRR:>>>>>>>>>", err)
+		// 	// todo create new cookie for this user
 
-			uuid, err := t.service.GetNewCookie()
-			if err != nil {
-				// internalerr
-				fmt.Println("internal error")
-			}
+		// 	uuid, err := t.service.GetNewCookie()
+		// 	if err != nil {
+		// 		// internalerr
+		// 		fmt.Println("internal error")
+		// 	}
 
-			http.SetCookie(w, &http.Cookie{
-				Name:   "session",
-				Value:  uuid,
-				MaxAge: 5,
-			})
+		// 	http.SetCookie(w, &http.Cookie{
+		// 		Name:   "session",
+		// 		Value:  uuid,
+		// 		MaxAge: 5,
+		// 	})
 
-			t.User = nil
-			next(w, r)
-			return
-		}
+		// 	t.User = nil
+		// 	next(w, r)
+		// 	return
+		// }
 
-		t.User, err = t.service.GetUserByCookiesValues(sessionCookie.Value)
-		if err != nil {
-			// todo internal err
-		}
+		// t.User, err = t.service.GetUserByCookiesValues(sessionCookie.Value)
+		// if err != nil {
+		// 	// todo internal err
+		// }
 
-		if t.User != nil {
-			// user in
-			fmt.Println(t.User)
-		} else {
-			// user NOT
-		}
+		// if t.User != nil {
+		// 	// user in
+		// 	fmt.Println(t.User)
+		// } else {
+		// 	// user NOT
+		// }
 
-		cookie := &http.Cookie{
-			Name:   "session",
-			Value:  "123",
-			MaxAge: 60,
-		}
+		// cookie := &http.Cookie{
+		// 	Name:   "session",
+		// 	Value:  "123",
+		// 	MaxAge: 60,
+		// }
 
-		http.SetCookie(w, cookie)
-		cookie, err = r.Cookie("session")
-		if err != nil {
-			switch {
-			case errors.Is(err, http.ErrNoCookie):
-				http.Error(w, "cookie not found", http.StatusBadRequest)
-			default:
-				log.Println(err)
-				http.Error(w, "server error", http.StatusInternalServerError)
-			}
-			return
-		}
+		// http.SetCookie(w, cookie)
+		// cookie, err = r.Cookie("session")
+		// if err != nil {
+		// 	switch {
+		// 	case errors.Is(err, http.ErrNoCookie):
+		// 		http.Error(w, "cookie not found", http.StatusBadRequest)
+		// 	default:
+		// 		log.Println(err)
+		// 		http.Error(w, "server error", http.StatusInternalServerError)
+		// 	}
+		// 	return
+		// }
 
 		next(w, r)
 
