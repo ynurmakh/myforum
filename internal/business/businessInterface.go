@@ -6,7 +6,7 @@ import (
 
 type Business interface {
 	_Cookie
-	// _Posts
+	_Posts
 }
 
 type _Cookie interface {
@@ -19,11 +19,9 @@ type _Cookie interface {
 }
 
 type _Registration interface {
-	// transport запрашивает у service существет ли такой user
-	//  Проверка по email и/или nickname производится тут
-	UserIsExist(models.User) (bool, error)
 	// transport запрашивает у service создать user
 	//  при успешном созданий вернется созданный user
+	// UserIsExist Realized here
 	CreateNewUser(user models.User, password string) (*models.User, error)
 }
 
@@ -38,5 +36,11 @@ type _Posts interface {
 	//  business получив запрос GetPostsForHome(3, 30, []string{}) вернет самые свежие посты с 60 по 90
 	// categories []string{} должен содержать по каким категориям отсортировать посты
 	//  Пустой categories вернет все посты несмотря на категорий
-	GetPostsForHome(pageNum, onPage int, categories []string) (*[]models.Post, error)
+	GetPostsForHome(pageNum, onPage int, categories []int) (*[]models.Post, error)
+
+	GetPostByID(Post_ID int) (*models.Post, error)
+
+	CreatePost(*models.Post) error
+
+	GetCategiries() (*[]models.Categories, error)
 }

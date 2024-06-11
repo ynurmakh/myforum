@@ -3,6 +3,7 @@ package http
 import (
 	"bytes"
 	"fmt"
+	"forum/internal/models"
 	"log"
 	"net/http"
 	"path"
@@ -31,21 +32,21 @@ func (t *Transport) home(w http.ResponseWriter, r *http.Request) {
 
 	// fmt.Printf("Hello %v from handler", t.User.Email)
 
-	// posts, err := t.service.GetPostsForHome(0, 0, []string{})
-	// if err != nil {
-	// 	fmt.Println("posts not found")
-	// 	http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-	// 	return
-	// }
-	// // user, err := t.service.GetUser(t.UserId)
-	// if err != nil {
-	// 	fmt.Println("user not found")
-	// }
-	// data := &TemplateData{
-	// 	Data: posts,
-	// 	// User: user,
-	// }
-	// t.render(w, http.StatusOK, "home.html", data)
+	posts, err := t.service.GetPostsForHome(0, 0, []int{})
+	if err != nil {
+		fmt.Println("posts not found")
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+	// user, err := t.service.GetUser(t.UserId)
+	if err != nil {
+		fmt.Println("user not found")
+	}
+	data := &TemplateData{
+		Data: posts,
+		User: t.User,
+	}
+	t.render(w, http.StatusOK, "home.html", data)
 }
 
 func (t *Transport) postView(w http.ResponseWriter, r *http.Request) {
@@ -88,11 +89,14 @@ func (t *Transport) postCreate(w http.ResponseWriter, r *http.Request) {
 		t.render(w, http.StatusOK, "post-create.html", data)
 	} else if r.Method == http.MethodPost {
 		err := r.ParseForm()
+		newPost := &models.Post{}
+
 		if err != nil {
 			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 			return
 		}
-		// title := r.PostForm.Get("title")
+		title := r.PostForm.Get("title")
+		newPost.Post_Title = title
 		// content := r.PostForm.Get("content")
 		// id, err := t.service.CreatePost(1, 1, title, content)
 		// http.Redirect(w, r, fmt.Sprintf("/post/view/%d", id), http.StatusSeeOther)

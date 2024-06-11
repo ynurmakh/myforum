@@ -3,9 +3,10 @@ package models
 import "time"
 
 type Post struct {
-	Post_ID      int
-	User_ID      int
-	Post_Title   string
-	Post_Content string
-	Created_Time time.Time
+	Post_ID         int       `db:"post_id"`
+	User_ID         int       `db:"user_id"`
+	Post_Title      string    `db:"post_title"`
+	Post_Content    string    `db:"post_content"`
+	Created_Time    time.Time `db:"created_time"`
+	Post_Categories []Categories
 }

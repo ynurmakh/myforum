@@ -4,9 +4,8 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"time"
-
 	"forum/internal/models"
+	"time"
 )
 
 func (s *Sqlite) CheckTheCookie(cookie string, expireTime int) (*models.User, error) {
@@ -29,7 +28,7 @@ func (s *Sqlite) CheckTheCookie(cookie string, expireTime int) (*models.User, er
 
 	// Получение информации о пользователе
 	var user models.User
-	err = s.db.QueryRow("SELECT id, email FROM users WHERE id=?", userID).Scan(&user.Id, &user.Email)
+	err = s.db.QueryRow("SELECT id, email FROM users WHERE id=?", userID).Scan(&user.User_id, &user.User_email)
 	if err != nil {
 		return nil, fmt.Errorf("ошибка при получении информации о пользователе: %v", err)
 	}
