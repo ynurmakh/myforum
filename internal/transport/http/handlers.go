@@ -3,12 +3,14 @@ package http
 import (
 	"bytes"
 	"fmt"
-	"forum/internal/models"
 	"log"
 	"net/http"
+	"os"
 	"path"
 	"strconv"
 	"strings"
+
+	"forum/internal/models"
 )
 
 type TemplateData struct {
@@ -18,8 +20,39 @@ type TemplateData struct {
 }
 
 func (t *Transport) home(w http.ResponseWriter, r *http.Request) {
-	// fmt.Println(t.service.CreateNewCookie())
-	// os.Exit(1)
+	postss, err := t.service.GetPostsForHome(1, 10, []int{})
+	if err != nil {
+		log.Fatalln(err)
+	}
+	for i := 0; i < len(*postss); i++ {
+		fmt.Println((*postss)[i])
+	}
+
+	postss, err = t.service.GetPostsForHome(2, 10, []int{})
+	if err != nil {
+		log.Fatalln(err)
+	}
+	for i := 0; i < len(*postss); i++ {
+		fmt.Println((*postss)[i])
+	}
+
+	postss, err = t.service.GetPostsForHome(3, 10, []int{})
+	if err != nil {
+		log.Fatalln(err)
+	}
+	for i := 0; i < len(*postss); i++ {
+		fmt.Println((*postss)[i])
+	}
+
+	postss, err = t.service.GetPostsForHome(4, 10, []int{})
+	if err != nil {
+		log.Fatalln(err)
+	}
+	for i := 0; i < len(*postss); i++ {
+		fmt.Println((*postss)[i])
+	}
+
+	os.Exit(1)
 
 	if r.URL.Path != "/" {
 		t.notFound(w)

@@ -3,7 +3,7 @@ package models
 import "time"
 
 type Post struct {
-	Post_ID         int       `db:"post_id"`
+	Post_ID         int64     `db:"post_id"`
 	User_ID         int       `db:"user_id"`
 	Post_Title      string    `db:"post_title"`
 	Post_Content    string    `db:"post_content"`

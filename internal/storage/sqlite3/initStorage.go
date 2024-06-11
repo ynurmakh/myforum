@@ -27,7 +27,7 @@ func InitStorage() (storage.StorageInterface, error) {
 		db:      db,
 	}
 
-	err = mystorage.checkScheme()
+	// err = mystorage.checkScheme()
 
 	var i storage.StorageInterface
 	_ = i

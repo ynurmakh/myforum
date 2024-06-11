@@ -5,13 +5,14 @@ import (
 )
 
 type StorageInterface interface {
-	Cookies
+	_1Cookies
 	// UserRegistration
 	// UserLogin
-	// Posts
+	_4Posts
+	_5Categories
 }
 
-type Cookies interface {
+type _1Cookies interface {
 	// Service отправляет storage UUID и userEmail и storage привязывает за UUID данного user`а
 	TieCookieToUser(UserID int, UUID string, DeadTimeSeconds int) (bool, error)
 	// Service отправляет storage UUID кукиса и storage возврашает какой юзер закреплен за данным UUID. Если UUID не сущ. в БД то создаст его и вернет nil,nil. Данный метод автоматический продливает жизннь UUID до time.Now() + expireTime
@@ -20,7 +21,7 @@ type Cookies interface {
 	KillCookie(UUID string) (bool, error)
 }
 
-type UserRegistration interface {
+type _2UserRegistration interface {
 	// Service отправляет email и storage возвращает ture если сущ. юзер с такой почтой, или false если нет.
 	IsExistByEmail(email string) (bool, error)
 	// Service отправляет NickName и storage возвращает ture если сущ. юзер с такой NickName, или false если нет.
@@ -29,18 +30,33 @@ type UserRegistration interface {
 	InsertNewUserByEmailAndPass(email, nickname, password string) (bool, error)
 }
 
-type UserLogin interface {
+type _3UserLogin interface {
 	// Сервис отдает БД email юзера.
 	//  Если пароль который отправил сервис являееться "GUARANTEED" то сторона storage его не проверяет.
 	// А если пароль не "GUARANTEED", то storage проверит совпадение пароля и вернят *User только если верно, иначе nil, nil
 	GetUserByEmailAndPass(email string, hashed_password string) (*models.User, error)
 }
 
-type Posts interface {
+type _4Posts interface {
 	// Отправляеться userID(Владелец поста), заголовог поста, контент поста и катогорий массивом стрингов, в ответ жду номер post_id который был успешно создан
 	InsertNewPost(userID int, postTitle, postContent string, categories []string) (int64, error)
+
+	//
+	SelectAllPostsByCategory()
+
+	//
+	SelectAllPostsByUserID()
+
+	//
+	SelectLastPostsByCount(start, end int) (*[]models.Post, error)
+
 	//
 	SelectPostByPostID()
-	SelectAllPostsByUserID()
-	SelectAllPostsByCategory()
+}
+
+type _5Categories interface {
+	GetCategiriesByID([]int) (*[]models.Categories, error)
+
+	// READY TO USE Возвращает из базы все категорий
+	GetAllCategiries() (*[]models.Categories, error)
 }

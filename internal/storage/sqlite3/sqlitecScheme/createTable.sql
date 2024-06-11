@@ -25,17 +25,17 @@ CREATE TABLE IF NOT EXISTS cookies (
 );
 
 CREATE TABLE IF NOT EXISTS posts (
-    post_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    post_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     user_id INTEGER NOT NULL,
-    post_title VARCHAR(50),
-    post_content VARCHAR(2048),
-    created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    post_title VARCHAR(50) NOT NULL,
+    post_content VARCHAR(2048) NOT NULL,
+    created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS categries_name (
-    category_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    category_name VARCHAR(50) UNIQUE
+CREATE TABLE IF NOT EXISTS categories_name (
+    category_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    category_name VARCHAR(50) UNIQUE NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS post_category (
@@ -45,12 +45,12 @@ CREATE TABLE IF NOT EXISTS post_category (
     FOREIGN KEY (category_id) REFERENCES categries_name(category_id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS commemtaries (
+CREATE TABLE IF NOT EXISTS commentaries (
     commentary_id INTEGER PRIMARY KEY AUTOINCREMENT,
     post_id INTEGER NOT NULL,
     user_id INTEGER NOT NULL,
-    commentray_content VARCHAR(2048),
-    created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    commentray_content VARCHAR(2048) NOT NULL,
+    created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     FOREIGN KEY (post_id) REFERENCES posts(post_id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
@@ -68,5 +68,5 @@ CREATE TABLE IF NOT EXISTS commentari_reactions (
     commentaie_id INTEGER,
     reaction INTEGER,
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
-    FOREIGN KEY (commentaie_id) REFERENCES commemtaries(commentary_id) ON DELETE CASCADE
+    FOREIGN KEY (commentaie_id) REFERENCES commentaries(commentary_id) ON DELETE CASCADE
 );
