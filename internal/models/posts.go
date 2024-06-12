@@ -9,4 +9,11 @@ type Post struct {
 	Post_Content    string    `db:"post_content"`
 	Created_Time    time.Time `db:"created_time"`
 	Post_Categories []Categories
+	Reactions       React
+}
+
+type React struct {
+	Likes           int
+	Dislikes        int
+	ReactByThisUser int
 }

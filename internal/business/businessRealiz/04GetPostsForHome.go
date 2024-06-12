@@ -1,8 +1,6 @@
 package businessrealiz
 
 import (
-	"fmt"
-
 	"forum/internal/models"
 )
 
@@ -25,7 +23,6 @@ func (s *Service) GetPostsForHome(pageNum, onPage int, categories []int) (*[]mod
 		}, nil
 	}
 
-	fmt.Println(onPage*(pageNum-1), onPage)
 	posts, err := s.storage.SelectLastPostsByCount(onPage*(pageNum-1), onPage)
 	if err != nil {
 		return nil, err
