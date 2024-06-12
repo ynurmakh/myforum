@@ -6,8 +6,7 @@
         {{range .Data}}
         <li class="post-item">
             <div class="post-item_user">
-                <div class="post-item_user-icon"><img src="static/img/default-user.svg" alt="img"></div>
-                <div class="post-item_user-name">user{{.User_ID}}</div>
+                <div class="post-item_user-name">{{.User.User_nickname}}</div>
                 <div class="post-item_created">{{humanDate .Created_Time}}</div>
             </div>
             <ul class="post-item_categories-list">
@@ -23,9 +22,6 @@
                         {{.Post_Title}}
                     </a>
                 </h3>
-                <div class="post-item_content">
-                    {{.Post_Content}}
-                </div>
             </div>
         </li>
         {{end}}

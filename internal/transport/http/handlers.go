@@ -54,44 +54,44 @@ func (t *Transport) postView(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// post, err := t.service.GetPost(id)
+	post, err := t.service.GetPostByID(id)
 	if err != nil {
 		fmt.Println("post not found")
 	}
-	// user, err := t.service.GetUser(t.UserId)
 	if err != nil {
 		fmt.Println("user not found")
 	}
 	data := &TemplateData{
-		// Data: post,
-		// User: user,
+		Data: post,
+		User: t.User,
 	}
 	t.render(w, http.StatusOK, "post-view.html", data)
 }
 
 func (t *Transport) postCreate(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
-		// user, err := t.service.GetUser(t.UserId)
-		// if err != nil {
-		// 	fmt.Println("user not found")
-		// }
 		data := &TemplateData{
-			// User: user,
+			User: t.User,
 		}
 		t.render(w, http.StatusOK, "post-create.html", data)
 	} else if r.Method == http.MethodPost {
 		err := r.ParseForm()
-		newPost := &models.Post{}
-
 		if err != nil {
 			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 			return
 		}
 		title := r.PostForm.Get("title")
-		newPost.Post_Title = title
-		// content := r.PostForm.Get("content")
-		// id, err := t.service.CreatePost(1, 1, title, content)
+		content := r.PostForm.Get("content")
+		newPost := &models.Post{
+			User:            *t.User,
+			Post_Title:      title,
+			Post_Content:    content,
+			Post_Categories: []models.Categories{},
+		}
+
+		err = t.service.CreatePost(newPost)
 		// http.Redirect(w, r, fmt.Sprintf("/post/view/%d", id), http.StatusSeeOther)
+		http.Redirect(w, r, fmt.Sprintf("/"), http.StatusSeeOther)
 	} else {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		return

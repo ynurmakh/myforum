@@ -4,8 +4,8 @@
 
 .post-item {
     margin: 30px 0;
-    padding-left:  10px;
-    border-left: 1px solid rgb(200, 200, 200);
+    /* padding-left:  10px; */
+    border-left: 1px solid rgb(210, 210, 210);
 }
 
 .post-item {
@@ -25,14 +25,14 @@
 }
 .post-item_user-name {
     margin-left: 10px;
-    color: black;
+    color: rgb(40, 80, 0);;
     font-weight: bold;
 }
 .post-item_created {
     margin-left: 10px;
     font-style: italic;
     color: grey;
-    font-size: .8em;
+    font-size: .6em;
 }
 .post-item_wrap {
     padding: 10px;

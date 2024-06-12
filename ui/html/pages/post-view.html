@@ -1,7 +1,43 @@
 {{define "main"}}
 <div class="post-view">
-     <h2>{{.Data.Title}}</h2>
-    <p>{{.Data.Content}}</p>
-    <p>{{.Data.CreatedAt}}</p>
+    <div class="post-view_header">
+        <h2 class="post-view_title">{{.Data.Post_Title}}</h2>
+        <div class="post-view_user">
+            <b>by {{.Data.User.User_nickname}}</b>
+            <br>
+            <i>{{humanDate .Data.Created_Time}}</i>
+        </div>
+    </div>
+    <p>{{.Data.Post_Content}}</p>
+
+    <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Praesentium facere omnis excepturi officia, ab aliquam
+        molestiae, est et totam adipisci, laborum soluta commodi dolor? Libero, quae, aut a iusto optio veniam officia
+        qui ullam, eaque sit nisi quis expedita et? Ducimus voluptate, ratione deserunt qui numquam sequi natus
+        temporibus vitae officia provident expedita, aliquid molestiae recusandae tenetur quam saepe ab quasi. Tenetur
+        velit saepe facilis quaerat, molestiae a corporis modi ipsum ipsam totam obcaecati sequi error neque corrupti
+        vel? Illo impedit consequatur dolorum sapiente quasi doloribus aspernatur natus eaque neque quaerat quam, quo
+        veniam itaque ipsa nemo rem quod placeat!
+    </p>
+    
+    <div class="reactions">
+        <img class="like" src="/static/img/like-default.svg" alt="like">
+        <img class="dislike" src="/static/img/like-default.svg" alt="dislike">
+    </div>
+
+    <div class="comments">
+        <h3>Comments</h3>
+        <ul class="comments-list">
+            <li class="comments_item">
+                <div class="comments_user">
+                    <div class="comments_user-name">{{.Data.User.User_nickname}}</div>
+                    <div class="comments_created">{{humanDate .Data.Created_Time}}</div>
+                </div>
+                <div class="comments_content">
+                    zbs
+                </div>
+            </li>
+        </ul>
+        
+    </div>
 </div>
 {{end}}
