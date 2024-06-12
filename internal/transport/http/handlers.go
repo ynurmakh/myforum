@@ -3,57 +3,21 @@ package http
 import (
 	"bytes"
 	"fmt"
+	"forum/internal/models"
 	"log"
 	"net/http"
-	"os"
 	"path"
 	"strconv"
 	"strings"
-
-	"forum/internal/models"
 )
 
 type TemplateData struct {
 	Data     interface{}
-	User     interface{}
+	User     *models.User
 	PageName string
 }
 
 func (t *Transport) home(w http.ResponseWriter, r *http.Request) {
-	postss, err := t.service.GetPostsForHome(1, 10, []int{})
-	if err != nil {
-		log.Fatalln(err)
-	}
-	for i := 0; i < len(*postss); i++ {
-		fmt.Println((*postss)[i])
-	}
-
-	postss, err = t.service.GetPostsForHome(2, 10, []int{})
-	if err != nil {
-		log.Fatalln(err)
-	}
-	for i := 0; i < len(*postss); i++ {
-		fmt.Println((*postss)[i])
-	}
-
-	postss, err = t.service.GetPostsForHome(3, 10, []int{})
-	if err != nil {
-		log.Fatalln(err)
-	}
-	for i := 0; i < len(*postss); i++ {
-		fmt.Println((*postss)[i])
-	}
-
-	postss, err = t.service.GetPostsForHome(4, 10, []int{})
-	if err != nil {
-		log.Fatalln(err)
-	}
-	for i := 0; i < len(*postss); i++ {
-		fmt.Println((*postss)[i])
-	}
-
-	os.Exit(1)
-
 	if r.URL.Path != "/" {
 		t.notFound(w)
 		return
@@ -63,18 +27,13 @@ func (t *Transport) home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// fmt.Printf("Hello %v from handler", t.User.Email)
-
-	posts, err := t.service.GetPostsForHome(0, 0, []int{})
+	posts, err := t.service.GetPostsForHome(1, 20, []int{})
 	if err != nil {
 		fmt.Println("posts not found")
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
-	// user, err := t.service.GetUser(t.UserId)
-	if err != nil {
-		fmt.Println("user not found")
-	}
+
 	data := &TemplateData{
 		Data: posts,
 		User: t.User,
