@@ -1,7 +1,6 @@
 package sqlite3
 
 import (
-	"fmt"
 	"forum/internal/models"
 )
 
@@ -13,8 +12,15 @@ func (s *Sqlite) InsertNewPost(post *models.Post) error {
 		return err
 	}
 
-	fmt.Println(err)
-	fmt.Println(res)
+	postid, err := res.LastInsertId()
+	if err != nil {
+		return err
+	}
+	newpost, err := s.SelectPostByPostID(int(postid))
+	if err != nil {
+		return err
+	}
+	*post = *newpost
 
 	return nil
 }

@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"forum/internal/business"
 	businessrealiz "forum/internal/business/businessRealiz"
+	"forum/internal/models"
 	"forum/internal/storage/sqlite3"
 	"log"
 )
@@ -19,11 +21,16 @@ func main() {
 	}
 	test(service)
 
-	// var post &models.Post{
+	var p1 models.Post
+	p1.Post_Title = "New Post Title By service.CreatePost"
+	p1.Post_Content = "New Post Content By service.CreatePost New Post Content By service.CreatePost New Post Content By service.CreatePost New Post Content By service.CreatePost New Post Content By service.CreatePost New Post Content By service.CreatePost "
+	p1.User.User_id = 228
 
-	// }
+	fmt.Println(p1)
 
-	// service.CreatePost()
+	service.CreatePost(&p1)
+
+	fmt.Println(p1)
 }
 
 func test(service business.Business) {
