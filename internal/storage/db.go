@@ -39,7 +39,7 @@ type _3UserLogin interface {
 
 type _4Posts interface {
 	// Отправляеться userID(Владелец поста), заголовог поста, контент поста и катогорий массивом стрингов, в ответ жду номер post_id который был успешно создан
-	InsertNewPost(userID int, postTitle, postContent string, categories []string) (int64, error)
+	InsertNewPost(post *models.Post) error
 
 	//
 	SelectAllPostsByCategory()
@@ -47,11 +47,11 @@ type _4Posts interface {
 	//
 	SelectAllPostsByUserID()
 
-	//
+	// READY TO USE
 	SelectLastPostsByCount(start, end int) (*[]models.Post, error)
 
 	//
-	SelectPostByPostID()
+	SelectPostByPostID(PostId int) (*models.Post, error)
 }
 
 type _5Categories interface {

@@ -1,16 +1,13 @@
 package main
 
 import (
-	"fmt"
+	"forum/internal/business"
 	businessrealiz "forum/internal/business/businessRealiz"
 	"forum/internal/storage/sqlite3"
 	"log"
-	"os"
 )
 
 func main() {
-	fmt.Println(os.Args)
-
 	storage, err := sqlite3.InitStorage()
 	if err != nil {
 		log.Fatal(err)
@@ -20,10 +17,33 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	_ = service
+	test(service)
 
-	storage.CheckTheCookie("0654b38f-c5b7-4b1c-9a71-bb6c4b485cd7", 5)
+	// var post &models.Post{
+
+	// }
+
+	// service.CreatePost()
 }
 
-func CheckCookie() {
+func test(service business.Business) {
+	_, err := service.GetPostsForHome(1, 20, []int{})
+	if err != nil {
+		panic(err)
+	}
+
+	_, err = service.GetPostByID(1)
+	if err != nil {
+		panic(err)
+	}
+
+	_, err = service.GetPostByID(2)
+	if err != nil {
+		panic(err)
+	}
+
+	_, err = service.GetPostByID(3)
+	if err != nil {
+		panic(err)
+	}
 }
