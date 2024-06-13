@@ -33,9 +33,16 @@ func (t *Transport) home(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
+	categories, err := t.service.GetCategiries()
 
 	data := &TemplateData{
-		Data: posts,
+		Data: struct {
+			Posts      *[]models.Post
+			Categories *[]models.Categories
+		}{
+			Posts:      posts,
+			Categories: categories,
+		},
 		User: t.User,
 	}
 	t.render(w, http.StatusOK, "home.html", data)

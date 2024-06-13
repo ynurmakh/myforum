@@ -1,9 +1,12 @@
 {{define "main"}}
 <div class="home">
     <h2>Latest Posts</h2>
-    {{if .Data}}
+    {{if .Data.Posts}}
+    <ul class="categories">
+        {{.Data.Categories}}
+    </ul>
     <ul class="post-list">
-        {{range .Data}}
+        {{range .Data.Posts}}
         <li class="post-item">
             <div class="post-item_user">
                 <div class="post-item_user-name">{{.User.User_nickname}}</div>
