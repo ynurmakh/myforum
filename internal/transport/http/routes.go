@@ -12,6 +12,8 @@ func (t *Transport) routes() *http.ServeMux {
 	// mux.Handle("/protected", sessionMiddleware(http.HandlerFunc(protectedRoute)))
 	mux.HandleFunc("/", t.CookiesMiddlware(t.home))
 	mux.HandleFunc("/post/view/", t.CookiesMiddlware(t.postView))
+	mux.HandleFunc("/myposts/", t.CookiesMiddlware(t.myPosts))
+	mux.HandleFunc("/liked/", t.CookiesMiddlware(t.liked))
 	mux.HandleFunc("/post/create", t.CookiesMiddlware(t.postCreate))
 	mux.HandleFunc("/user/signup", t.CookiesMiddlware(t.signup))
 	mux.HandleFunc("/user/login", t.CookiesMiddlware(t.login))

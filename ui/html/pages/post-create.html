@@ -2,6 +2,12 @@
 <div class="post-create">
     <h2>Create Post</h2>
     <form class="form" action="/post/create" method="post">
+
+        <label class="label" for="label">Title</label>
+        <input class="input" id="title" type="text" name="title" required>
+        <label class="label" for="label">Content</label>
+        <textarea class="textarea content-input" name="content" required></textarea>
+        <label class="label" for="">Tags</label>
         <ul class="categories-list">
             {{range .Data.Categories}}
             <li class="categories_item">
@@ -10,10 +16,6 @@
             </li>
             {{end}}
         </ul>
-        <label class="label" for="label">Title</label>
-        <input class="input" id="title" type="text" name="title" required>
-        <label class="label" for="label">Content</label>
-        <textarea class="textarea content-input" name="content" required></textarea>
         <button class="btn submit">Create</button>
     </form>
 </div>
