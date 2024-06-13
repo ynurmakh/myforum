@@ -41,7 +41,7 @@ type _Posts interface {
 	// READY TO USE
 	GetPostByID(Post_ID int) (post *models.Post, err error)
 	// 2
-	CreatePost(*models.Post) error
+	CreatePost(post *models.Post, categiresNum []int) error
 
 	GetCategiries() (*[]models.Categories, error)
 }
