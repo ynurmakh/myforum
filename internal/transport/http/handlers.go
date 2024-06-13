@@ -45,6 +45,10 @@ func (t *Transport) home(w http.ResponseWriter, r *http.Request) {
 		t.render(w, http.StatusOK, "home.html", data)
 	} else if r.Method == http.MethodPost {
 		categories, err := t.service.GetCategiries()
+		if err != nil {
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			return
+		}
 
 		err = r.ParseForm()
 		if err != nil {
@@ -107,6 +111,11 @@ func (t *Transport) postView(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println("user not found")
 	}
+	// mock category
+	post.Post_Categories = append(post.Post_Categories, models.Categories{
+		Category_id:   0,
+		Category_name: "Trash",
+	})
 	data := &TemplateData{
 		Data: post,
 		User: t.User,
@@ -116,9 +125,21 @@ func (t *Transport) postView(w http.ResponseWriter, r *http.Request) {
 
 func (t *Transport) postCreate(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
+		categories, err := t.service.GetCategiries()
+		if err != nil {
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			return
+		}
+
 		data := &TemplateData{
+			Data: struct {
+				Categories *[]models.Categories
+			}{
+				Categories: categories,
+			},
 			User: t.User,
 		}
+
 		t.render(w, http.StatusOK, "post-create.html", data)
 	} else if r.Method == http.MethodPost {
 		err := r.ParseForm()
@@ -126,16 +147,26 @@ func (t *Transport) postCreate(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 			return
 		}
+
+		categoriesList := r.PostForm["categories"]
+		categoriesId := []int{}
+		for _, c := range categoriesList {
+			num, err := strconv.Atoi(c)
+			if err != nil {
+				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+				return
+			}
+			categoriesId = append(categoriesId, num)
+		}
 		title := r.PostForm.Get("title")
 		content := r.PostForm.Get("content")
 		newPost := &models.Post{
-			User:            *t.User,
-			Post_Title:      title,
-			Post_Content:    content,
-			Post_Categories: []models.Categories{},
+			User:         *t.User,
+			Post_Title:   title,
+			Post_Content: content,
 		}
 
-		err = t.service.CreatePost(newPost, []int{})
+		err = t.service.CreatePost(newPost, categoriesId)
 		id := newPost.Post_ID
 		http.Redirect(w, r, fmt.Sprintf("/post/view/%d", id), http.StatusSeeOther)
 		// http.Redirect(w, r, fmt.Sprintf("/"), http.StatusSeeOther)
