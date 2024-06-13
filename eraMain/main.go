@@ -2,11 +2,12 @@ package main
 
 import (
 	"fmt"
+	"log"
+
 	"forum/internal/business"
 	businessrealiz "forum/internal/business/businessRealiz"
 	"forum/internal/models"
 	"forum/internal/storage/sqlite3"
-	"log"
 )
 
 func main() {
@@ -28,9 +29,11 @@ func main() {
 
 	fmt.Println(p1)
 
-	service.CreatePost(&p1)
+	service.CreatePost(&p1, []int{})
 
 	fmt.Println(p1)
+
+	fmt.Println(service.GetCategiries())
 }
 
 func test(service business.Business) {

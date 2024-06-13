@@ -3,12 +3,13 @@ package http
 import (
 	"bytes"
 	"fmt"
-	"forum/internal/models"
 	"log"
 	"net/http"
 	"path"
 	"strconv"
 	"strings"
+
+	"forum/internal/models"
 )
 
 type TemplateData struct {
@@ -96,9 +97,10 @@ func (t *Transport) postCreate(w http.ResponseWriter, r *http.Request) {
 			Post_Categories: []models.Categories{},
 		}
 
-		err = t.service.CreatePost(newPost)
-		// http.Redirect(w, r, fmt.Sprintf("/post/view/%d", id), http.StatusSeeOther)
-		http.Redirect(w, r, fmt.Sprintf("/"), http.StatusSeeOther)
+		err = t.service.CreatePost(newPost, []int{})
+		id := newPost.Post_ID
+		http.Redirect(w, r, fmt.Sprintf("/post/view/%d", id), http.StatusSeeOther)
+		// http.Redirect(w, r, fmt.Sprintf("/"), http.StatusSeeOther)
 	} else {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		return
