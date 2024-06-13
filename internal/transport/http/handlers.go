@@ -3,12 +3,13 @@ package http
 import (
 	"bytes"
 	"fmt"
-	"forum/internal/models"
 	"log"
 	"net/http"
 	"path"
 	"strconv"
 	"strings"
+
+	"forum/internal/models"
 )
 
 type TemplateData struct {
@@ -35,7 +36,7 @@ func (t *Transport) home(w http.ResponseWriter, r *http.Request) {
 		data := &TemplateData{
 			Data: struct {
 				Posts      *[]models.Post
-				Categories *[]models.Categories
+				Categories *[]models.Category
 			}{
 				Posts:      posts,
 				Categories: categories,
@@ -77,7 +78,7 @@ func (t *Transport) home(w http.ResponseWriter, r *http.Request) {
 		data := &TemplateData{
 			Data: struct {
 				Posts      *[]models.Post
-				Categories *[]models.Categories
+				Categories *[]models.Category
 			}{
 				Posts:      posts,
 				Categories: categories,
@@ -112,7 +113,7 @@ func (t *Transport) postView(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("user not found")
 	}
 	// mock category
-	post.Post_Categories = append(post.Post_Categories, models.Categories{
+	post.Post_Categories = append(post.Post_Categories, models.Category{
 		Category_id:   0,
 		Category_name: "Trash",
 	})
@@ -133,7 +134,7 @@ func (t *Transport) postCreate(w http.ResponseWriter, r *http.Request) {
 
 		data := &TemplateData{
 			Data: struct {
-				Categories *[]models.Categories
+				Categories *[]models.Category
 			}{
 				Categories: categories,
 			},

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 
-	"forum/internal/business"
 	businessrealiz "forum/internal/business/businessRealiz"
 	"forum/internal/models"
 	"forum/internal/storage/sqlite3"
@@ -20,7 +19,8 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	test(service)
+	bservice := service.(*businessrealiz.Service)
+	test(*bservice)
 
 	var p1 models.Post
 	p1.Post_Title = "New Post Title By service.CreatePost"
@@ -29,14 +29,14 @@ func main() {
 
 	fmt.Println(p1)
 
-	service.CreatePost(&p1, []int{})
+	// service.CreatePost(&p1, []int{})
 
 	fmt.Println(p1)
 
 	fmt.Println(service.GetCategiries())
 }
 
-func test(service business.Business) {
+func test(service businessrealiz.Service) {
 	_, err := service.GetPostsForHome(1, 20, []int{})
 	if err != nil {
 		panic(err)

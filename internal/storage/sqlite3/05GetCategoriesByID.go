@@ -7,9 +7,9 @@ import (
 	"forum/internal/models"
 )
 
-func (s *Sqlite) GetCategiriesByID(categoriesId []int) (*[]models.Categories, error) {
+func (s *Sqlite) GetCategiriesByID(categoriesId []int) (*[]models.Category, error) {
 	if len(categoriesId) == 0 {
-		return &[]models.Categories{}, nil
+		return &[]models.Category{}, nil
 	}
 
 	// Создаем placeholders для IN-условия
@@ -23,5 +23,5 @@ func (s *Sqlite) GetCategiriesByID(categoriesId []int) (*[]models.Categories, er
 	query := fmt.Sprintf("SELECT category_id, category_name FROM categories WHERE category_id IN (%s)", strings.Join(placeholders, ","))
 	fmt.Println(query)
 
-	return &[]models.Categories{}, nil
+	return &[]models.Category{}, nil
 }

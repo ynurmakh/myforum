@@ -55,8 +55,8 @@ type _4Posts interface {
 }
 
 type _5Categories interface {
-	GetCategiriesByID([]int) (*[]models.Categories, error)
+	GetCategiriesByID([]int) (*[]models.Category, error)
 
 	// READY TO USE Возвращает из базы все категорий
-	GetAllCategiries() (*[]models.Categories, error)
+	GetAllCategiries() (*[]models.Category, error)
 }

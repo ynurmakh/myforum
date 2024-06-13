@@ -36,14 +36,16 @@ type _Posts interface {
 	//  business получив запрос GetPostsForHome(3, 30, []string{}) вернет самые свежие посты с 60 по 90
 	// categories []string{} должен содержать по каким категориям отсортировать посты
 	//  Пустой categories вернет все посты несмотря на категорий
-	// READY TO USE
+	// 1 Передалать чтоб был нормальный поряд
+	// 2 Сортировка по категориям
 	GetPostsForHome(pageNum, onPage int, categories []int) (*[]models.Post, error)
 	// READY TO USE
 	GetPostByID(Post_ID int) (post *models.Post, err error)
-	// 2
+	// 3 доделать учет категрий при созданий
 	CreatePost(post *models.Post, categiresNum []int) error
 
-	GetCategiries() (*[]models.Categories, error)
+	// REAY
+	GetCategiries() (*[]models.Category, error)
 }
 
 type Reactions interface {

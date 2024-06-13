@@ -16,3 +16,6 @@ push:
 	git add .
 	git commit -m "$(m)"
 	git push 
+
+sqlite:
+	sqlite3 internal/storage/sqlite3/database.db

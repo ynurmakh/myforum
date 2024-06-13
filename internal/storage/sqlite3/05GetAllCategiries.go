@@ -4,17 +4,17 @@ import (
 	"forum/internal/models"
 )
 
-func (s *Sqlite) GetAllCategiries() (*[]models.Categories, error) {
+func (s *Sqlite) GetAllCategiries() (*[]models.Category, error) {
 	rows, err := s.db.Query(`SELECT * FROM categories_name`)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	categoris := []models.Categories{}
+	categoris := []models.Category{}
 
 	for rows.Next() {
-		var category models.Categories
+		var category models.Category
 		err := rows.Scan(&category.Category_id, &category.Category_name)
 		if err != nil {
 			return nil, err

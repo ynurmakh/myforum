@@ -8,11 +8,12 @@ type Post struct {
 	Post_Title      string    `db:"post_title"`
 	Post_Content    string    `db:"post_content"`
 	Created_Time    time.Time `db:"created_time"`
-	Post_Categories []Categories
-	Reactions       *ReactionsType
+	Post_Categories []Category
+	Reactions       ReactionsType
+	Comments        []Comment
 }
 
-type Categories struct {
+type Category struct {
 	Category_id   int    `db:"category_id"`
 	Category_name string `db:"category_name"`
 }
@@ -20,5 +21,12 @@ type Categories struct {
 type ReactionsType struct {
 	Likes           int
 	Dislikes        int
-	ReactByThisUser int
+	ReactByThisUser int // 1 This user liked this object, -1 disliked
+}
+
+type Comment struct {
+	User                User
+	Commentraie_Content string
+	Commentarie_Date    time.Time
+	Reactions           ReactionsType
 }
