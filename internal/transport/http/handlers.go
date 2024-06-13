@@ -272,3 +272,53 @@ func (t *Transport) render(w http.ResponseWriter, status int, page string, data 
 func (t *Transport) notFound(w http.ResponseWriter) {
 	t.render(w, http.StatusNotFound, "notfound.html", &TemplateData{Data: "Page Not Found"})
 }
+
+func (t *Transport) myPosts(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodGet {
+		posts, err := t.service.GetPostsForHome(1, 20, []int{})
+		if err != nil {
+			fmt.Println("posts not found")
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			return
+		}
+
+		data := &TemplateData{
+			Data: struct {
+				Posts      *[]models.Post
+				Categories *[]models.Categories
+			}{
+				Posts: posts,
+			},
+			User: t.User,
+		}
+		t.render(w, http.StatusOK, "home.html", data)
+	} else {
+		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+		return
+	}
+}
+
+func (t *Transport) liked(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodGet {
+		posts, err := t.service.GetPostsForHome(1, 20, []int{})
+		if err != nil {
+			fmt.Println("posts not found")
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			return
+		}
+
+		data := &TemplateData{
+			Data: struct {
+				Posts      *[]models.Post
+				Categories *[]models.Categories
+			}{
+				Posts: posts,
+			},
+			User: t.User,
+		}
+		t.render(w, http.StatusOK, "home.html", data)
+	} else {
+		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+		return
+	}
+}

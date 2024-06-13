@@ -2,6 +2,7 @@
 <div class="home">
     <h2>Latest Posts</h2>
     {{if .Data.Posts}}
+    {{if .Data.Categories}}
     <form action="/" method="post" class="categories-form">
         <ul class="categories-list">
             {{range .Data.Categories}}
@@ -13,6 +14,7 @@
         </ul>
         <button class="btn filter-btn" type="submit">Filter</button>
     </form>
+    {{end}}
     <ul class="post-list">
         {{range .Data.Posts}}
         <li class="post-item">

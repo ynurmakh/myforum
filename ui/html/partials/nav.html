@@ -5,6 +5,8 @@
     {{end}}
     <a class="btn" href='/'>Home</a>
     {{if .User}}
+    <a class="btn" href='/myposts'>My posts</a>
+    <a class="btn" href='/liked'>Liked</a>
     <a class="btn" href="/post/create">Create</a>
     <form class="logout" action='/user/logout' method='POST'>
         <button class="btn">Logout</button>
