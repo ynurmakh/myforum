@@ -3,13 +3,12 @@ package http
 import (
 	"bytes"
 	"fmt"
+	"forum/internal/models"
 	"log"
 	"net/http"
 	"path"
 	"strconv"
 	"strings"
-
-	"forum/internal/models"
 )
 
 type TemplateData struct {
@@ -23,30 +22,69 @@ func (t *Transport) home(w http.ResponseWriter, r *http.Request) {
 		t.notFound(w)
 		return
 	}
-	if r.Method != http.MethodGet {
+	if r.Method == http.MethodGet {
+		categories, err := t.service.GetCategiries()
+
+		posts, err := t.service.GetPostsForHome(1, 20, []int{})
+		if err != nil {
+			fmt.Println("posts not found")
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			return
+		}
+
+		data := &TemplateData{
+			Data: struct {
+				Posts      *[]models.Post
+				Categories *[]models.Categories
+			}{
+				Posts:      posts,
+				Categories: categories,
+			},
+			User: t.User,
+		}
+		t.render(w, http.StatusOK, "home.html", data)
+	} else if r.Method == http.MethodPost {
+		categories, err := t.service.GetCategiries()
+
+		err = r.ParseForm()
+		if err != nil {
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			http.Redirect(w, r, fmt.Sprintf("/"), http.StatusSeeOther)
+		}
+
+		categoriesList := r.PostForm["categories"]
+		categoriesId := []int{}
+		for _, c := range categoriesList {
+			num, err := strconv.Atoi(c)
+			if err != nil {
+				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+				return
+			}
+			categoriesId = append(categoriesId, num)
+		}
+
+		posts, err := t.service.GetPostsForHome(1, 20, categoriesId)
+		if err != nil {
+			fmt.Println("posts not found")
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			return
+		}
+
+		data := &TemplateData{
+			Data: struct {
+				Posts      *[]models.Post
+				Categories *[]models.Categories
+			}{
+				Posts:      posts,
+				Categories: categories,
+			},
+			User: t.User,
+		}
+		t.render(w, http.StatusOK, "home.html", data)
+	} else {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		return
 	}
-
-	posts, err := t.service.GetPostsForHome(1, 20, []int{})
-	if err != nil {
-		fmt.Println("posts not found")
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-		return
-	}
-	categories, err := t.service.GetCategiries()
-
-	data := &TemplateData{
-		Data: struct {
-			Posts      *[]models.Post
-			Categories *[]models.Categories
-		}{
-			Posts:      posts,
-			Categories: categories,
-		},
-		User: t.User,
-	}
-	t.render(w, http.StatusOK, "home.html", data)
 }
 
 func (t *Transport) postView(w http.ResponseWriter, r *http.Request) {

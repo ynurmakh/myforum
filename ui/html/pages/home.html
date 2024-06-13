@@ -2,9 +2,19 @@
 <div class="home">
     <h2>Latest Posts</h2>
     {{if .Data.Posts}}
-    <ul class="categories">
-        {{.Data.Categories}}
-    </ul>
+    <form action="/" method="post" class="categories-form">
+        <ul class="categories-list">
+            {{range .Data.Categories}}
+            <li class="categories_item">
+                <input type="checkbox" name="categories" value="{{.Category_id}}" id="c{{.Category_id}}">
+                <label for="c{{.Category_id}}">{{.Category_name}}</label>
+                <!-- {{.Category_id}}
+                {{.Category_name}} -->
+            </li>
+            {{end}}
+        </ul>
+        <button type="submit">filter</button>
+    </form>
     <ul class="post-list">
         {{range .Data.Posts}}
         <li class="post-item">
