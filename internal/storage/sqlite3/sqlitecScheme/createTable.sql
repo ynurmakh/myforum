@@ -18,6 +18,11 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 
+`SELECT post_id, Category
+FROM posts, json_each(posts.Category)
+WHERE json_each.value in (?)`, "1,2,3,4"
+
+
 -- SELECT posts.post_id, posts.post_title, posts.post_content, posts.created_time, users.user_id, users.user_lvl, users.user_email, users.user_nickname
 -- FROM posts
 -- JOIN users ON posts.user_id = users.user_id
@@ -30,6 +35,7 @@ CREATE TABLE IF NOT EXISTS cookies (
     last_call TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
+
 
 CREATE TABLE IF NOT EXISTS posts (
     post_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,

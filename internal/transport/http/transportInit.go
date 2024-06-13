@@ -2,10 +2,6 @@ package http
 
 import (
 	"flag"
-	"forum/internal/business"
-	"forum/internal/models"
-	"forum/internal/transport"
-	"forum/ui"
 	"html/template"
 	"io/fs"
 	"log"
@@ -14,11 +10,17 @@ import (
 	"path/filepath"
 	"time"
 
+	"forum/internal/business"
+	businessrealiz "forum/internal/business/businessRealiz"
+	"forum/internal/models"
+	"forum/internal/transport"
+	"forum/ui"
+
 	"gopkg.in/yaml.v2"
 )
 
 type Transport struct {
-	service       business.Business
+	service       *businessrealiz.Service
 	port          string
 	templateCache map[string]*template.Template
 	configs       *configType
@@ -34,8 +36,7 @@ func InitTransport(b business.Business) (transport.Transport, error) {
 	var t Transport
 	flag.StringVar(&t.port, "p", "8080", "port")
 	flag.Parse()
-
-	t.service = b
+	t.service = b.(*businessrealiz.Service)
 	t.User = &models.User{
 		User_id:       1,
 		User_lvl:      1,

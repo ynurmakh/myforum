@@ -2,13 +2,15 @@ package businessrealiz
 
 import (
 	"encoding/json"
+	"os"
+
 	"forum/internal/business"
 	"forum/internal/storage"
-	"os"
+	"forum/internal/storage/sqlite3"
 )
 
 type Service struct {
-	storage storage.StorageInterface
+	storage *sqlite3.Sqlite
 	configs *ConfigType
 }
 
@@ -23,7 +25,7 @@ func InitService(b storage.StorageInterface) (business.Business, error) {
 	}
 
 	service := &Service{
-		storage: b,
+		storage: b.(*sqlite3.Sqlite),
 		configs: config,
 	}
 

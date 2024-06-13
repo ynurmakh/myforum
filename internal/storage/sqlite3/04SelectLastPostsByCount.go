@@ -2,6 +2,7 @@ package sqlite3
 
 import (
 	"fmt"
+
 	"forum/internal/models"
 )
 
@@ -28,3 +29,16 @@ func (s *Sqlite) SelectLastPostsByCount(start, onPage int) (*[]models.Post, erro
 
 	return &posts, nil
 }
+
+/*
+
+
+1
+2
+3
+4
+5
+
+
+
+*/

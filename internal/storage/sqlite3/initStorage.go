@@ -29,10 +29,7 @@ func InitStorage() (storage.StorageInterface, error) {
 
 	// err = mystorage.checkScheme()
 
-	var i storage.StorageInterface
-	_ = i
-	i = mystorage
-
+	var _ storage.StorageInterface = mystorage
 	return mystorage, nil
 }
 
