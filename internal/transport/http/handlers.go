@@ -169,7 +169,6 @@ func (t *Transport) postCreate(w http.ResponseWriter, r *http.Request) {
 		err = t.service.CreatePost(newPost, categoriesId)
 		id := newPost.Post_ID
 		http.Redirect(w, r, fmt.Sprintf("/post/view/%d", id), http.StatusSeeOther)
-		// http.Redirect(w, r, fmt.Sprintf("/"), http.StatusSeeOther)
 	} else {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		return

@@ -1,4 +1,7 @@
-- full post
 - error handler
 - logger
 - pagination
+- filters style
+- page liked posts
+- page created posts
+- page create styles

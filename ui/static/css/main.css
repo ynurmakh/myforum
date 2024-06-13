@@ -88,6 +88,35 @@ img {
     display: block;
     outline: none;
     padding: 5px 20px;
+    width: 100%;
     border: none;
     background-color: rgb(210, 240, 240, .5);
+}
+.categories-list {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.categories-list input {
+    display: none;
+}
+
+.categories-list input+label {
+    display: block;
+    padding: 5px 20px;
+    margin: 5px 5px;
+    font-size: .8em;
+    cursor: pointer;
+    border: 1px solid rgb(210, 210, 210);
+    border-radius: 1em;
+    transition: background-color .2s;
+}
+
+.categories-list input+label:hover {
+    background-color: rgb(215, 235, 240);
+}
+
+.categories-list input:checked+label {
+    background-color: rgb(215, 240, 240);
+    border-color: transparent;
 }
