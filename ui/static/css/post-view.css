@@ -1,5 +1,6 @@
 .post-view_header {
     margin-top: 100px;
+    margin-bottom: -20px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -8,7 +9,17 @@
 .post-view_user {
     text-align: right;
     color: rgb(40, 80, 0);
-    ;
+}
+
+.categories {
+    color: rgb(0, 140, 150);
+    font-size: .8em;
+    font-style: italic;
+    font-weight: bold;
+}
+
+.content {
+    margin-top: 30px;
 }
 
 .reactions {

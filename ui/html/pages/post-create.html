@@ -2,6 +2,14 @@
 <div class="post-create">
     <h2>Create Post</h2>
     <form class="form" action="/post/create" method="post">
+        <ul class="categories-list">
+            {{range .Data.Categories}}
+            <li class="categories_item">
+                <input type="checkbox" name="categories" value="{{.Category_id}}" id="c{{.Category_id}}">
+                <label for="c{{.Category_id}}">{{.Category_name}}</label>
+            </li>
+            {{end}}
+        </ul>
         <label class="label" for="label">Title</label>
         <input class="input" id="title" type="text" name="title" required>
         <label class="label" for="label">Content</label>
