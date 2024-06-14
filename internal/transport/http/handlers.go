@@ -3,13 +3,12 @@ package http
 import (
 	"bytes"
 	"fmt"
+	"forum/internal/models"
 	"log"
 	"net/http"
 	"path"
 	"strconv"
 	"strings"
-
-	"forum/internal/models"
 )
 
 type TemplateData struct {
@@ -286,7 +285,7 @@ func (t *Transport) myPosts(w http.ResponseWriter, r *http.Request) {
 		data := &TemplateData{
 			Data: struct {
 				Posts      *[]models.Post
-				Categories *[]models.Categories
+				Categories *[]models.Category
 			}{
 				Posts: posts,
 			},
@@ -311,7 +310,7 @@ func (t *Transport) liked(w http.ResponseWriter, r *http.Request) {
 		data := &TemplateData{
 			Data: struct {
 				Posts      *[]models.Post
-				Categories *[]models.Categories
+				Categories *[]models.Category
 			}{
 				Posts: posts,
 			},
