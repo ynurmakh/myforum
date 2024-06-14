@@ -3,19 +3,25 @@ package http
 import (
 	"bytes"
 	"fmt"
+	"forum/internal/models"
 	"log"
 	"net/http"
 	"path"
 	"strconv"
 	"strings"
-
-	"forum/internal/models"
 )
 
 type TemplateData struct {
 	Data     interface{}
 	User     *models.User
 	PageName string
+}
+
+type CheckedCategory struct {
+	// models.Category
+	Category_id   int
+	Category_name string
+	IsChecked     bool
 }
 
 func (t *Transport) home(w http.ResponseWriter, r *http.Request) {
@@ -32,14 +38,23 @@ func (t *Transport) home(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 			return
 		}
-
+		checkedCategories := &[]CheckedCategory{}
+		for _, c := range *categories {
+			*checkedCategories = append(*checkedCategories, CheckedCategory{
+				Category_id:   c.Category_id,
+				Category_name: c.Category_name,
+				IsChecked:     false,
+			})
+		}
 		data := &TemplateData{
 			Data: struct {
+				Header     string
 				Posts      *[]models.Post
-				Categories *[]models.Category
+				Categories *[]CheckedCategory
 			}{
+				Header:     "Latest Posts",
 				Posts:      posts,
-				Categories: categories,
+				Categories: checkedCategories,
 			},
 			User: t.User,
 		}
@@ -74,14 +89,31 @@ func (t *Transport) home(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 			return
 		}
-
+		checkedCategories := &[]CheckedCategory{}
+		for _, c := range *categories {
+			checked := func() bool {
+				for _, num := range categoriesId {
+					if num == c.Category_id {
+						return true
+					}
+				}
+				return false
+			}()
+			*checkedCategories = append(*checkedCategories, CheckedCategory{
+				Category_id:   c.Category_id,
+				Category_name: c.Category_name,
+				IsChecked:     checked,
+			})
+		}
 		data := &TemplateData{
 			Data: struct {
+				Header     string
 				Posts      *[]models.Post
-				Categories *[]models.Category
+				Categories *[]CheckedCategory
 			}{
+				Header:     "Latest Posts",
 				Posts:      posts,
-				Categories: categories,
+				Categories: checkedCategories,
 			},
 			User: t.User,
 		}
@@ -106,6 +138,7 @@ func (t *Transport) postView(w http.ResponseWriter, r *http.Request) {
 	}
 
 	post, err := t.service.GetPostByID(id)
+	fmt.Println(post)
 	if err != nil {
 		fmt.Println("post not found")
 	}
@@ -262,6 +295,7 @@ func (t *Transport) render(w http.ResponseWriter, status int, page string, data 
 	err := ts.ExecuteTemplate(buf, "base", data)
 	if err != nil {
 		log.Println(err)
+		t.notFound(w)
 		return
 	}
 
@@ -285,10 +319,12 @@ func (t *Transport) myPosts(w http.ResponseWriter, r *http.Request) {
 
 		data := &TemplateData{
 			Data: struct {
+				Header     string
 				Posts      *[]models.Post
 				Categories *[]models.Category
 			}{
-				Posts: posts,
+				Header: "My posts",
+				Posts:  posts,
 			},
 			User: t.User,
 		}
@@ -310,10 +346,12 @@ func (t *Transport) liked(w http.ResponseWriter, r *http.Request) {
 
 		data := &TemplateData{
 			Data: struct {
+				Header     string
 				Posts      *[]models.Post
 				Categories *[]models.Category
 			}{
-				Posts: posts,
+				Header: "Liked posts",
+				Posts:  posts,
 			},
 			User: t.User,
 		}

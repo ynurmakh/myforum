@@ -1,13 +1,13 @@
 {{define "main"}}
 <div class="home">
-    <h2>Latest Posts</h2>
+    <h2>{{.Data.Header}}</h2>
     {{if .Data.Posts}}
     {{if .Data.Categories}}
     <form action="/" method="post" class="categories-form">
         <ul class="categories-list">
             {{range .Data.Categories}}
             <li class="categories_item">
-                <input type="checkbox" name="categories" value="{{.Category_id}}" id="c{{.Category_id}}">
+                <input type="checkbox" name="categories" value="{{.Category_id}}" id="c{{.Category_id}}" {{if .IsChecked}}checked{{end}}>
                 <label for="c{{.Category_id}}">{{.Category_name}}</label>
             </li>
             {{end}}
@@ -22,19 +22,20 @@
                 <div class="post-item_user-name">{{.User.User_nickname}}</div>
                 <div class="post-item_created">{{humanDate .Created_Time}}</div>
             </div>
-            <ul class="post-item_categories-list">
-                {{range .Post_Categories}}
-                <li class="categories-item">
-                    c{{.}}
-                </li>
-                {{end}}
-            </ul>
+
             <div class="post-item_wrap">
                 <h3 class="title">
                     <a href="/post/view/{{.Post_ID}}">
                         {{.Post_Title}}
                     </a>
                 </h3>
+                <ul class="post-item_categories-list">
+                    {{range .Post_Categories}}
+                    <li class="categories_item">
+                        {{.Category_name}}
+                    </li>
+                    {{end}}
+                </ul>
             </div>
         </li>
         {{end}}
