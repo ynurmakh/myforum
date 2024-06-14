@@ -3,12 +3,13 @@ package http
 import (
 	"bytes"
 	"fmt"
-	"forum/internal/models"
 	"log"
 	"net/http"
 	"path"
 	"strconv"
 	"strings"
+
+	"forum/internal/models"
 )
 
 type TemplateData struct {
@@ -25,7 +26,7 @@ func (t *Transport) home(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
 		categories, err := t.service.GetCategiries()
 
-		posts, err := t.service.GetPostsForHome(1, 20, []int{})
+		posts, err := t.service.GetPostsForHome(1, 20, []int{}, t.User)
 		if err != nil {
 			fmt.Println("posts not found")
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
@@ -67,7 +68,7 @@ func (t *Transport) home(w http.ResponseWriter, r *http.Request) {
 			categoriesId = append(categoriesId, num)
 		}
 
-		posts, err := t.service.GetPostsForHome(1, 20, categoriesId)
+		posts, err := t.service.GetPostsForHome(1, 20, categoriesId, t.User)
 		if err != nil {
 			fmt.Println("posts not found")
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
@@ -275,7 +276,7 @@ func (t *Transport) notFound(w http.ResponseWriter) {
 
 func (t *Transport) myPosts(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
-		posts, err := t.service.GetPostsForHome(1, 20, []int{})
+		posts, err := t.service.GetPostsForHome(1, 20, []int{}, t.User)
 		if err != nil {
 			fmt.Println("posts not found")
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
@@ -300,7 +301,7 @@ func (t *Transport) myPosts(w http.ResponseWriter, r *http.Request) {
 
 func (t *Transport) liked(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
-		posts, err := t.service.GetPostsForHome(1, 20, []int{})
+		posts, err := t.service.GetPostsForHome(1, 20, []int{}, t.User)
 		if err != nil {
 			fmt.Println("posts not found")
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)

@@ -6,6 +6,7 @@ import (
 	"os"
 
 	businessrealiz "forum/internal/business/businessRealiz"
+	"forum/internal/models"
 	"forum/internal/storage/sqlite3"
 )
 
@@ -39,7 +40,7 @@ func main() {
 }
 
 func test(service businessrealiz.Service) {
-	posts, err := service.GetPostsForHome(1, 2, []int{1, 2, 3}, nil)
+	posts, err := service.GetPostsForHome(1, 2, []int{1, 2, 3}, &models.User{User_id: 228})
 	if err != nil {
 		panic(err)
 	}
