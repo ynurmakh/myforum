@@ -3,9 +3,9 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
 
 	businessrealiz "forum/internal/business/businessRealiz"
-	"forum/internal/models"
 	"forum/internal/storage/sqlite3"
 )
 
@@ -22,22 +22,42 @@ func main() {
 	bservice := service.(*businessrealiz.Service)
 	test(*bservice)
 
-	var p1 models.Post
-	p1.Post_Title = "New Post Title By service.CreatePost"
-	p1.Post_Content = "New Post Content By service.CreatePost New Post Content By service.CreatePost New Post Content By service.CreatePost New Post Content By service.CreatePost New Post Content By service.CreatePost New Post Content By service.CreatePost "
-	p1.User.User_id = 228
+	// var p1 models.Post
+	// p1.Post_Title = "New Post Title By service.CreatePost"
+	// p1.Post_Content = "New Post Content By service.CreatePost New Post Content By service.CreatePost New Post Content By service.CreatePost New Post Content By service.CreatePost New Post Content By service.CreatePost New Post Content By service.CreatePost "
+	// p1.User.User_id = 228
 
-	fmt.Println(p1)
+	// fmt.Println(p1)
 
 	// service.CreatePost(&p1, []int{})
 
-	fmt.Println(p1)
+	// fmt.Println(p1)
 
-	fmt.Println(service.GetCategiries())
+	fmt.Println(bservice.GetCategiries())
+
+	bservice.GetPostsForHome(1, 20, []int{1, 2, 3}, nil)
 }
 
 func test(service businessrealiz.Service) {
-	_, err := service.GetPostsForHome(1, 20, []int{})
+	posts, err := service.GetPostsForHome(1, 2, []int{1, 2, 3}, nil)
+	if err != nil {
+		panic(err)
+	}
+	for _, post := range *posts {
+		fmt.Println(post)
+	}
+
+	fmt.Println(1)
+	posts, err = service.GetPostsForHome(2, 2, []int{1, 2, 3}, nil)
+	if err != nil {
+		panic(err)
+	}
+	for _, post := range *posts {
+		fmt.Println(post)
+	}
+
+	os.Exit(1)
+	_, err = service.GetPostsForHome(1, 20, []int{}, nil)
 	if err != nil {
 		panic(err)
 	}

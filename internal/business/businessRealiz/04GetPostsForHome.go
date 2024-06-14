@@ -4,26 +4,16 @@ import (
 	"forum/internal/models"
 )
 
-func (s *Service) GetPostsForHome(pageNum, onPage int, categories []int) (*[]models.Post, error) {
+func (s *Service) GetPostsForHome(pageNum, onPage int, categories []int, thisUser *models.User) (*[]models.Post, error) {
 	if pageNum < 1 || onPage < 1 {
 		return &[]models.Post{}, nil
 	}
 
 	if len(categories) > 0 {
-		allcategories, err := s.storage.GetAllCategiries()
-		if err != nil {
-			return nil, err
-		}
-		_ = allcategories
-		// to do филтрация по категриям и возврать постов с учетом пагинаций и вмещаемости
-		return &[]models.Post{
-			{
-				Post_Title: "with categories not realized yet",
-			},
-		}, nil
+		return s.storage.FilteredSelectLastPostsByCount(onPage*(pageNum-1), onPage, thisUser, categories)
 	}
 
-	posts, err := s.storage.SelectLastPostsByCount(onPage*(pageNum-1), onPage)
+	posts, err := s.storage.SelectLastPostsByCount(onPage*(pageNum-1), onPage, thisUser)
 	if err != nil {
 		return nil, err
 	}

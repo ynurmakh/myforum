@@ -48,7 +48,7 @@ type _4Posts interface {
 	SelectAllPostsByUserID()
 
 	// READY TO USE
-	SelectLastPostsByCount(start, end int) (*[]models.Post, error)
+	SelectLastPostsByCount(start, end int, thisUser *models.User) (*[]models.Post, error)
 
 	//
 	SelectPostByPostID(PostId int) (*models.Post, error)

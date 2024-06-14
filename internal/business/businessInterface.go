@@ -38,7 +38,7 @@ type _Posts interface {
 	//  Пустой categories вернет все посты несмотря на категорий
 	// 1 Передалать чтоб был нормальный поряд
 	// 2 Сортировка по категориям
-	GetPostsForHome(pageNum, onPage int, categories []int) (*[]models.Post, error)
+	GetPostsForHome(pageNum, onPage int, categories []int, thisUser *models.User) (*[]models.Post, error)
 	// READY TO USE
 	GetPostByID(Post_ID int) (post *models.Post, err error)
 	// 3 доделать учет категрий при созданий
