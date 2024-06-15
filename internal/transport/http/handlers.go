@@ -125,36 +125,54 @@ func (t *Transport) home(w http.ResponseWriter, r *http.Request) {
 }
 
 func (t *Transport) postView(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
+	if r.Method == http.MethodGet {
+		baseID := path.Base(r.URL.Path)
+		id, err := strconv.Atoi(baseID)
+		if err != nil || id < 1 {
+			fmt.Println("atoi err")
+			http.NotFound(w, r)
+			return
+		}
+
+		post, err := t.service.GetPostByID(id)
+		if err != nil {
+			fmt.Println("post not found")
+		}
+		if err != nil {
+			fmt.Println("user not found")
+		}
+		// mock category
+		post.Post_Categories = append(post.Post_Categories, models.Category{
+			Category_id:   0,
+			Category_name: "Trash",
+		})
+		data := &TemplateData{
+			Data: post,
+			User: t.User,
+		}
+		t.render(w, http.StatusOK, "post-view.html", data)
+	} else if r.Method == http.MethodPost {
+		baseID := path.Base(r.URL.Path)
+		id, err := strconv.Atoi(baseID)
+		if err != nil || id < 1 {
+			fmt.Println("atoi err")
+			http.NotFound(w, r)
+			return
+		}
+
+		err = r.ParseForm()
+		if err != nil {
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			return
+		}
+		comment := r.PostForm.Get("comment")
+		fmt.Println(t.User, comment)
+
+		http.Redirect(w, r, fmt.Sprintf("/post/view/%d", id), http.StatusSeeOther)
+	} else {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		return
 	}
-	baseID := path.Base(r.URL.Path)
-	id, err := strconv.Atoi(baseID)
-	if err != nil || id < 1 {
-		fmt.Println("atoi err")
-		http.NotFound(w, r)
-		return
-	}
-
-	post, err := t.service.GetPostByID(id)
-	fmt.Println(post)
-	if err != nil {
-		fmt.Println("post not found")
-	}
-	if err != nil {
-		fmt.Println("user not found")
-	}
-	// mock category
-	post.Post_Categories = append(post.Post_Categories, models.Category{
-		Category_id:   0,
-		Category_name: "Trash",
-	})
-	data := &TemplateData{
-		Data: post,
-		User: t.User,
-	}
-	t.render(w, http.StatusOK, "post-view.html", data)
 }
 
 func (t *Transport) postCreate(w http.ResponseWriter, r *http.Request) {

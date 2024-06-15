@@ -71,3 +71,18 @@
     font-size: .8em;
 
 }
+.create-comment {
+    margin-top: 20px;
+}
+.create-comment_title {
+    font-size: 1em;
+}
+.create-comment_input {
+    margin-top: 10px;
+    padding: 10px 20px;
+    width: 100%;
+    height: 5em;
+    border: none;
+    outline: none;
+    background-color: rgb(235, 250, 250);
+}
