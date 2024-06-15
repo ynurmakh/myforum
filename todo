@@ -1,6 +1,7 @@
 - error handler
 - logger
 - pagination
-- tag list for current post
 - count likes for post and comment
+
+- tag list for current post
 - connect catas
