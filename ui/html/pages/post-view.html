@@ -32,9 +32,11 @@
             veniam itaque ipsa nemo rem quod placeat!
         </p>
     </div>
-    <div class="reactions">
-        <img class="like" src="/static/img/like-default.svg" alt="like">
-        <img class="dislike" src="/static/img/like-default.svg" alt="dislike">
+    <div class="reactions post-reactions">
+        <img class="like" src="/static/img/like-{{if .Data.Reactions.IsLike}}color{{else}}default{{end}}.svg" alt="like">
+        {{.Data.Reactions.Likes}}
+        <img class="dislike" src="/static/img/like-{{if .Data.Reactions.IsDislike}}default{{else}}default{{end}}.svg" alt="dislike">
+        {{.Data.Reactions.Dislikes}}
     </div>
 
     <div class="comments">
@@ -47,7 +49,14 @@
                 </div>
                 <div class="comments_content">
                     zbs
+                    <div class="reactions comment-reactions">
+                        <img class="like" src="/static/img/like-{{if .Data.Reactions.IsLike}}color{{else}}default{{end}}.svg" alt="like">
+                        {{.Data.Reactions.Likes}}
+                        <img class="dislike" src="/static/img/like-{{if .Data.Reactions.IsDislike}}default{{else}}default{{end}}.svg" alt="dislike">
+                        {{.Data.Reactions.Dislikes}}
+                    </div>
                 </div>
+
             </li>
         </ul>
         <form class="create-comment" method="post">

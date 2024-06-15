@@ -30,3 +30,11 @@ type Comment struct {
 	Commentarie_Date    time.Time
 	Reactions           ReactionsType
 }
+
+func (r *ReactionsType) IsLike() bool {
+	return r.ReactByThisUser > 0
+}
+
+func (r *ReactionsType) IsDislike() bool {
+	return r.ReactByThisUser < 0
+}
