@@ -96,3 +96,5 @@ CREATE TABLE "commentaries" (
     FOREIGN KEY (post_id) REFERENCES posts(post_id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
+
+INSERT INTO commentaries (post_id, user_id, commentray_content) VALUES (5, 1, 'hello mir')

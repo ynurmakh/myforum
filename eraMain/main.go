@@ -20,8 +20,9 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	bservice := service.(*businessrealiz.Service)
-	test(*bservice)
+	//test(*bservice)
 
 	// var p1 models.Post
 	// p1.Post_Title = "New Post Title By service.CreatePost"
@@ -33,10 +34,21 @@ func main() {
 	// service.CreatePost(&p1, []int{})
 
 	// fmt.Println(p1)
-
-	fmt.Println(bservice.GetCategiries())
+	
+	//fmt.Println(bservice.GetCategiries())
 
 	bservice.GetPostsForHome(1, 20, []int{1, 2, 3}, nil)
+	
+	//fmt.Println(storage.SelectComentByPostID(5))
+
+	f, err := storage.SelectComentByPostID(5)
+	if err != nil {
+		panic(err)
+	}
+	for inc,i := range f{
+fmt.Println("привет", inc, i)
+	}
+	
 }
 
 func test(service businessrealiz.Service) {
@@ -77,4 +89,5 @@ func test(service businessrealiz.Service) {
 	if err != nil {
 		panic(err)
 	}
+
 }
