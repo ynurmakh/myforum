@@ -49,7 +49,7 @@ type _4Posts interface {
 	GetPostsForHome(pageNum, onPage int, categories []int, thisUser *models.User) (*[]models.Post, error)
 	// READY TO USE
 	GetPostByID(Post_ID int, thisUser *models.User) (post *models.Post, err error)
-	// 1 доделать учет категрий при созданий
+	// READY TO USE
 	CreatePost(post *models.Post, categiresNum []int) error
 	// REAY TO USE
 	GetCategiries() (*[]models.Category, error)
