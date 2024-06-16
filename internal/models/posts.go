@@ -25,6 +25,7 @@ type ReactionsType struct {
 }
 
 type Comment struct {
+	Comment_Id int64
 	User                User
 	Commentraie_Content string
 	Commentarie_Date    time.Time
