@@ -54,6 +54,8 @@ type _4Posts interface {
 	SelectPostByPostID(PostId int) (*models.Post, error)
 
 	SelectComentByPostID(PostId int) ([]*models.Comment, error)
+
+	//InsertNewComment(forPost int) (commentaries *models.Comment, error)
 }
 
 type _5Categories interface {

@@ -48,7 +48,7 @@ type _Posts interface {
 
 type Commentaries interface {
 	// 3
-	CraeteCommentary(forPost *models.Post, comment *models.Comment)
+	CraeteCommentary(forComment *models.Post, comment *models.Comment) (*[]models.Comment, error)
 }
 
 type _Reactions interface {

@@ -10,7 +10,7 @@ func (s *Sqlite) SelectComentByPostID(PostId int, ) ([]*models.Comment, error) {
 	JOIN posts ON commentaries.post_id = posts.post_id
     JOIN users ON commentaries.user_id = users.user_id
     WHERE commentaries.post_id = ?
-	ORDER BY commentaries.created_time DESC;`
+	ORDER BY   DESC;`
 	rows, err := s.db.Query(query, PostId)
 	if err != nil {
 		return nil, err
