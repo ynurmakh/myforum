@@ -6,10 +6,10 @@ import (
 	"strings"
 )
 
-func (s *Sqlite) InsertNewPost(post *models.Post) error {
-	categStrArr := make([]string, 0, len(post.Post_Categories))
-	for _, cat := range post.Post_Categories {
-		categStrArr = append(categStrArr, strconv.Itoa(cat.Category_id))
+func (s *Sqlite) InsertNewPost(post *models.Post, cats []int) error {
+	categStrArr := make([]string, 0, len(cats))
+	for _, cat := range cats {
+		categStrArr = append(categStrArr, strconv.Itoa(cat))
 	}
 
 	categStr := "[" + strings.Join(categStrArr, ", ") + "]"

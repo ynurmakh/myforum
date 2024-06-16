@@ -10,7 +10,7 @@ type Business interface {
 	_3Login
 	_4Posts
 	_5Commentaries
-	_6Reactions
+	// _6Reactions
 }
 
 type _1Cookie interface {
@@ -56,16 +56,17 @@ type _4Posts interface {
 }
 
 type _5Commentaries interface {
-	// 3
-	CraeteCommentary(forComment *models.Post, comment *models.Comment) (error)
-	// NOT REALIZED
+	// REAY TO USE
+	CraeteCommentary(forComment *models.Post, comment *models.Comment) error
 }
 
 type _6Reactions interface {
-	// 2
+	// 1
 	// NOT REALIZED
 	ReactionsToPost(post *models.Post, thisUser *models.User, reactions int) error
-	// 4
+	// 2
 	// NOT REALIZED
-	ReactionsToComment(post *models.Post, thisUser *models.User, reactions int) error
+	ReactionsToComment(commentId int, thisUser *models.User, reactions int) error
 }
+
+// dat kol-va vseh postov dlya paginacii

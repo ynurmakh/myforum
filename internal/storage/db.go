@@ -39,7 +39,7 @@ type _3UserLogin interface {
 
 type _4Posts interface {
 	// Отправляеться userID(Владелец поста), заголовог поста, контент поста и катогорий массивом стрингов, в ответ жду номер post_id который был успешно создан
-	InsertNewPost(post *models.Post) error
+	InsertNewPost(post *models.Post, cats []int) error
 
 	//
 	SelectAllPostsByCategory()

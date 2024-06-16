@@ -141,11 +141,6 @@ func (t *Transport) postView(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			fmt.Println("user not found")
 		}
-		// mock category
-		post.Post_Categories = append(post.Post_Categories, models.Category{
-			Category_id:   0,
-			Category_name: "Trash",
-		})
 		data := &TemplateData{
 			Data: post,
 			User: t.User,
@@ -230,6 +225,7 @@ func (t *Transport) postCreate(w http.ResponseWriter, r *http.Request) {
 			Post_Content: content,
 		}
 
+		fmt.Println(categoriesId)
 		err = t.service.CreatePost(newPost, categoriesId)
 		id := newPost.Post_ID
 		http.Redirect(w, r, fmt.Sprintf("/post/view/%d", id), http.StatusSeeOther)
