@@ -41,29 +41,31 @@
 
     <div class="comments">
         <h3>Comments</h3>
+        <form class="create-comment" method="post">
+            <textarea class="create-comment_input" name="comment"></textarea>
+            <button class="btn create-comment_btn" type="submit">Send</button>
+        </form>
         <ul class="comments-list">
+            {{range .Data.Comments}}
             <li class="comments_item">
                 <div class="comments_user">
-                    <div class="comments_user-name">{{.Data.User.User_nickname}}</div>
-                    <div class="comments_created">{{humanDate .Data.Created_Time}}</div>
+                    <div class="comments_user-name">{{.User.User_nickname}}</div>
+                    <div class="comments_created">{{humanDate .Commentarie_Date}}</div>
                 </div>
                 <div class="comments_content">
-                    zbs
+                    {{.Commentraie_Content}}
                     <div class="reactions comment-reactions">
-                        <img class="like" src="/static/img/like-{{if .Data.Reactions.IsLike}}color{{else}}default{{end}}.svg" alt="like">
-                        {{.Data.Reactions.Likes}}
-                        <img class="dislike" src="/static/img/like-{{if .Data.Reactions.IsDislike}}default{{else}}default{{end}}.svg" alt="dislike">
-                        {{.Data.Reactions.Dislikes}}
+                        <img class="like" src="/static/img/like-{{if .Reactions.IsLike}}color{{else}}default{{end}}.svg" alt="like">
+                        {{.Reactions.Likes}}
+                        <img class="dislike" src="/static/img/like-{{if .Reactions.IsDislike}}default{{else}}default{{end}}.svg" alt="dislike">
+                        {{.Reactions.Dislikes}}
                     </div>
                 </div>
 
             </li>
+            {{end}}
         </ul>
-        <form class="create-comment" method="post">
-            <h3 class="create-comment_title">Your comment</h3>
-            <textarea class="create-comment_input" name="comment"></textarea>
-            <button class="btn create-comment_btn" type="submit">Send</button>
-        </form>
+
     </div>
 </div>
 {{end}}

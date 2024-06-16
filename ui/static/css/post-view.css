@@ -12,10 +12,14 @@
 }
 
 .categories {
+    display: flex;
     color: rgb(0, 100, 100);
     font-size: .8em;
     font-style: italic;
     font-weight: bold;
+}
+.categories li {
+    margin-right: 10px;
 }
 
 .content {
@@ -84,10 +88,6 @@
 .comment-reactions img {
     width: 40px;
     height: 20px;
-}
-
-.create-comment {
-    margin-top: 20px;
 }
 
 .create-comment_title {

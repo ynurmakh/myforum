@@ -3,13 +3,12 @@ package http
 import (
 	"bytes"
 	"fmt"
+	"forum/internal/models"
 	"log"
 	"net/http"
 	"path"
 	"strconv"
 	"strings"
-
-	"forum/internal/models"
 )
 
 type TemplateData struct {
@@ -171,12 +170,8 @@ func (t *Transport) postView(w http.ResponseWriter, r *http.Request) {
 
 		thisPost, err := t.service.GetPostByID(id, t.User)
 		if err != nil {
-			/*
-
-				Русик тут надо проверить и поченить
-
-			*/
-			panic(err)
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			return
 		}
 		t.service.CraeteCommentary(thisPost, &models.Comment{
 			User:                *t.User,
