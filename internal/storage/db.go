@@ -51,9 +51,9 @@ type _4Posts interface {
 	SelectLastPostsByCount(start, end int, thisUser *models.User) (*[]models.Post, error)
 
 	//
-	SelectPostByPostID(PostId int) (*models.Post, error)
+	SelectPostByPostID(PostId int, thisUser *models.User) (*models.Post, error)
 
-	SelectComentByPostID(PostId int) ([]*models.Comment, error)
+	SelectComentByPostID(PostId int) (*[]models.Comment, error)
 }
 
 type _5Categories interface {

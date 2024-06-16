@@ -16,7 +16,7 @@ func (s *Sqlite) InsertNewPost(post *models.Post) error {
 	if err != nil {
 		return err
 	}
-	newpost, err := s.SelectPostByPostID(int(postid))
+	newpost, err := s.SelectPostByPostID(int(postid), &post.User)
 	if err != nil {
 		return err
 	}
