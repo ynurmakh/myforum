@@ -134,7 +134,7 @@ func (t *Transport) postView(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		post, err := t.service.GetPostByID(id)
+		post, err := t.service.GetPostByID(id, t.User)
 		if err != nil {
 			fmt.Println("post not found")
 		}

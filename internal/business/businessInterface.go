@@ -5,31 +5,40 @@ import (
 )
 
 type Business interface {
-	_Cookie
-	_Posts
+	_1Cookie
+	_2Registration
+	_3Login
+	_4Posts
+	_5Commentaries
+	_6Reactions
 }
 
-type _Cookie interface {
+type _1Cookie interface {
 	// transport запрашивает у service новый uuid если у клиента нет кукиса
+	// NOT REALIZED
 	CreateNewCookie() (string, error)
 	// transport запрашивает у service прикриплен ли user под данным cookie
+	// NOT REALIZED
 	GetUserByCookie(sessionValue string) (*models.User, error)
 	// transport запрашивает у service отвязать юзера от этого куки
+	// NOT REALIZED
 	DeregisterByCookieValue(sessionValue string) (bool, error)
 }
 
-type _Registration interface {
+type _2Registration interface {
 	// transport запрашивает у service создать user
 	//  при успешном созданий вернется созданный user
 	// UserIsExist Realized here
+	// NOT REALIZED
 	CreateNewUser(user models.User, password string) (*models.User, error)
 }
 
-type _Login interface {
+type _3Login interface {
+	// NOT REALIZED
 	LoginByEmailAndPass(email, pass string) (*models.User, error)
 }
 
-type _Posts interface {
+type _4Posts interface {
 	// transport запрашивает у service посты для отображения на странице :8080/home
 	//  он отравляет сколько постов помещаеться на 1 странице у пользователя и на каком номере страницы
 	// пример user на 3 странице, и на одну страницу у него вмещаеться 30 постов
@@ -38,22 +47,29 @@ type _Posts interface {
 	//  Пустой categories вернет все посты несмотря на категорий
 	// READY TO USE
 	GetPostsForHome(pageNum, onPage int, categories []int, thisUser *models.User) (*[]models.Post, error)
-	// !!! categories not geted and likes not geted commentaries notgeted
-	GetPostByID(Post_ID int) (post *models.Post, err error)
-	// 1 доделать учет категрий при созданий
+	// READY TO USE
+	GetPostByID(Post_ID int, thisUser *models.User) (post *models.Post, err error)
+	// READY TO USE
 	CreatePost(post *models.Post, categiresNum []int) error
 	// REAY TO USE
 	GetCategiries() (*[]models.Category, error)
 }
 
-type Commentaries interface {
+type _5Commentaries interface {
 	// 3
+<<<<<<< HEAD
 	CraeteCommentary(forComment *models.Post, comment *models.Comment) (*[]models.Comment, error)
+=======
+	// NOT REALIZED
+	CraeteCommentary(forPost *models.Post, comment *models.Comment)
+>>>>>>> 33159092d707441a331beb0228bb5b8fe6e978fd
 }
 
-type _Reactions interface {
+type _6Reactions interface {
 	// 2
+	// NOT REALIZED
 	ReactionsToPost(post *models.Post, thisUser *models.User, reactions int) error
 	// 4
+	// NOT REALIZED
 	ReactionsToComment(post *models.Post, thisUser *models.User, reactions int) error
 }

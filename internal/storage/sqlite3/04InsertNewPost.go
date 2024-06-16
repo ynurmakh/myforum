@@ -2,12 +2,20 @@ package sqlite3
 
 import (
 	"forum/internal/models"
+	"strconv"
+	"strings"
 )
 
 func (s *Sqlite) InsertNewPost(post *models.Post) error {
-	queru := `INSERT INTO posts (user_id, post_title, post_content) VALUES (?, ?, ?)`
+	categStrArr := make([]string, 0, len(post.Post_Categories))
+	for _, cat := range post.Post_Categories {
+		categStrArr = append(categStrArr, strconv.Itoa(cat.Category_id))
+	}
 
-	res, err := s.db.Exec(queru, post.User.User_id, post.Post_Title, post.Post_Content)
+	categStr := "[" + strings.Join(categStrArr, ", ") + "]"
+
+	queru := `INSERT INTO posts (user_id, post_title, post_content, categories_id) VALUES (?, ?, ?, ?)`
+	res, err := s.db.Exec(queru, post.User.User_id, post.Post_Title, post.Post_Content, categStr)
 	if err != nil {
 		return err
 	}
@@ -16,7 +24,7 @@ func (s *Sqlite) InsertNewPost(post *models.Post) error {
 	if err != nil {
 		return err
 	}
-	newpost, err := s.SelectPostByPostID(int(postid))
+	newpost, err := s.SelectPostByPostID(int(postid), &post.User)
 	if err != nil {
 		return err
 	}
