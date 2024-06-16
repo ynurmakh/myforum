@@ -4,11 +4,11 @@ import (
 	"forum/internal/models"
 )
 
-func (s *Service)CraeteCommentary(forComment *models.Post, comment *models.Comment) (*[]models.Comment, error){
-	sl, err := s.storage.InsertNewComment(forComment, comment)
+func (s *Service)CraeteCommentary(forComment *models.Post, comment *models.Comment) (error){
+	err := s.storage.InsertNewComment(forComment, comment)
 	if err != nil {
-		return nil, err
+		return  err
 	}
-	return sl, err
+	return err
 
 }

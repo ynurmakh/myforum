@@ -57,12 +57,8 @@ type _4Posts interface {
 
 type _5Commentaries interface {
 	// 3
-<<<<<<< HEAD
-	CraeteCommentary(forComment *models.Post, comment *models.Comment) (*[]models.Comment, error)
-=======
+	CraeteCommentary(forComment *models.Post, comment *models.Comment) (error)
 	// NOT REALIZED
-	CraeteCommentary(forPost *models.Post, comment *models.Comment)
->>>>>>> 33159092d707441a331beb0228bb5b8fe6e978fd
 }
 
 type _6Reactions interface {

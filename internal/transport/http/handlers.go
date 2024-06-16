@@ -3,12 +3,13 @@ package http
 import (
 	"bytes"
 	"fmt"
-	"forum/internal/models"
 	"log"
 	"net/http"
 	"path"
 	"strconv"
 	"strings"
+
+	"forum/internal/models"
 )
 
 type TemplateData struct {
@@ -167,6 +168,22 @@ func (t *Transport) postView(w http.ResponseWriter, r *http.Request) {
 		}
 		comment := r.PostForm.Get("comment")
 		fmt.Println(t.User, comment)
+
+		thisPost, err := t.service.GetPostByID(id, t.User)
+		if err != nil {
+			/*
+
+				Русик тут надо проверить и поченить
+
+			*/
+			panic(err)
+		}
+		t.service.CraeteCommentary(thisPost, &models.Comment{
+			User:                *t.User,
+			Commentraie_Content: comment,
+		})
+
+		fmt.Println(thisPost.Comments)
 
 		http.Redirect(w, r, fmt.Sprintf("/post/view/%d", id), http.StatusSeeOther)
 	} else {
