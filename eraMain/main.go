@@ -2,15 +2,42 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"os"
-
-	businessrealiz "forum/internal/business/businessRealiz"
 	"forum/internal/models"
 	"forum/internal/storage/sqlite3"
+	"log"
+	"os"
+	"strconv"
+	"strings"
+
+	businessrealiz "forum/internal/business/businessRealiz"
+
+	"github.com/google/uuid"
 )
 
 func main() {
+	for {
+		fmt.Println(uuid.New())
+	}
+
+	/*
+
+		406da5bd-7f1a-42fc-8739-c4be0369d18f:12345635
+
+
+	*/
+
+	arr := []int{1, 2, 3, 5}
+	arrStr := make([]string, 0, len(arr))
+
+	for _, v := range arr {
+		arrStr = append(arrStr, strconv.Itoa(v))
+	}
+
+	Str := "[" + strings.Join(arrStr, ", ") + "]"
+	fmt.Println("|" + Str + "|")
+
+	os.Exit(1)
+
 	storage, err := sqlite3.InitStorage()
 	if err != nil {
 		log.Fatal(err)

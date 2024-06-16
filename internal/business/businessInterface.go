@@ -38,7 +38,7 @@ type _Posts interface {
 	//  Пустой categories вернет все посты несмотря на категорий
 	// READY TO USE
 	GetPostsForHome(pageNum, onPage int, categories []int, thisUser *models.User) (*[]models.Post, error)
-	// READY TO USE
+	// !!! categories not geted and likes not geted commentaries notgeted
 	GetPostByID(Post_ID int) (post *models.Post, err error)
 	// 1 доделать учет категрий при созданий
 	CreatePost(post *models.Post, categiresNum []int) error
