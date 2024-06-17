@@ -38,7 +38,7 @@ func InitTransport(b business.Business) (transport.Transport, error) {
 	flag.Parse()
 	t.service = b.(*businessrealiz.Service)
 	t.User = &models.User{
-		User_id:       1,
+		User_id:       3,
 		User_lvl:      1,
 		User_email:    "rus@mail.ru",
 		User_nickname: "rus228",

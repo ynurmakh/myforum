@@ -72,3 +72,6 @@ type _6Reactions interface {
 	// READY TO USE
 	ReactionsToComment(commentId int, thisUser *models.User, reactions int) error
 }
+
+// pojinit reakcii commentov nt parcit kolijestvo reacjii
+// get my liked posts dobavit
