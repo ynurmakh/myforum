@@ -2,10 +2,6 @@ package http
 
 import (
 	"flag"
-	"forum/internal/business"
-	"forum/internal/models"
-	"forum/internal/transport"
-	"forum/ui"
 	"html/template"
 	"io/fs"
 	"log"
@@ -13,6 +9,11 @@ import (
 	"os"
 	"path/filepath"
 	"time"
+
+	"forum/internal/business"
+	"forum/internal/models"
+	"forum/internal/transport"
+	"forum/ui"
 
 	businessrealiz "forum/internal/business/businessRealiz"
 
