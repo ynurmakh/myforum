@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 
+	"forum/internal/models"
 	"forum/internal/storage/sqlite3"
 
 	businessrealiz "forum/internal/business/businessRealiz"
@@ -21,6 +22,6 @@ func main() {
 	}
 
 	bservice := service.(*businessrealiz.Service)
-
-	fmt.Println(bservice.GetCountOfPosts())
+	p, _ := bservice.GetOnlyMyPosts(&models.User{User_id: 1})
+	fmt.Println(len(*p))
 }

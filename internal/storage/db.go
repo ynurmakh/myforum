@@ -45,15 +45,14 @@ type _4Posts interface {
 	InsertNewComment(post *models.Post, comment *models.Comment) error
 
 	//
-	SelectAllPostsByUserID()
+	SelectAllPostsByUserID(thisUser *models.User) (*[]models.Post, error)
 
 	// READY TO USE
 	SelectLastPostsByCount(start, end int, thisUser *models.User) (*[]models.Post, error)
 
-	//
+	// READY TO USE
 	SelectPostByPostID(PostId int, thisUser *models.User) (*models.Post, error)
 
-	// InsertNewComment(forPost int) (commentaries *models.Comment, error)
 	SelectComentByPostID(PostId int) (*[]models.Comment, error)
 
 	SelectCountOfPosts() (int, error)

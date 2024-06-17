@@ -54,7 +54,11 @@ type _4Posts interface {
 	// REAY TO USE
 	GetCategiries() (*[]models.Category, error)
 	// Получить количество всех постов для пагинаций
+	// REAY TO USE
 	GetCountOfPosts() (int, error)
+	// Получить мои посты
+	// REAY TO USE
+	GetOnlyMyPosts(thisUser *models.User) (*[]models.Post, error)
 }
 
 type _5Commentaries interface {

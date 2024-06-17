@@ -4,3 +4,9 @@
 
 - pagination
 - cookies
+
+
+- реакий для постов готово
+- реакий для комментарий готово
+- GetCountOfPosts() получить кол-во всех постов для пагинаций
+- SelectAllPostsByUserID для страницы "My Posts"
