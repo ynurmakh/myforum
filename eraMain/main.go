@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
 
 	"forum/internal/models"
 	"forum/internal/storage/sqlite3"
@@ -11,6 +12,14 @@ import (
 )
 
 func main() {
+	fmt.Println(len("123"))
+	fmt.Println(len("ф"))
+	fmt.Println(len("ы"))
+	fmt.Println(len("в"))
+	fmt.Println(len("汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字"))
+	fmt.Println(len("字"))
+
+	os.Exit(1)
 	storage, err := sqlite3.InitStorage()
 	if err != nil {
 		log.Fatal(err)
