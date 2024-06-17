@@ -61,11 +61,9 @@ type _5Commentaries interface {
 }
 
 type _6Reactions interface {
-	// 1
-	// NOT REALIZED
+	// READY TO USE
 	ReactionsToPost(post *models.Post, thisUser *models.User, reactions int) error
-	// 2
-	// NOT REALIZED
+	// READY TO USE
 	ReactionsToComment(commentId int, thisUser *models.User, reactions int) error
 }
 

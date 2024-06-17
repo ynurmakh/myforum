@@ -51,6 +51,11 @@
 --     row_num = 1;
 
 
+-- Поставить лайк
+-- UPDATE posts SET liked_ids = json_insert(liked_ids, '$[#]', 'new_user_id') WHERE post_id = 1;
+
+
+UPDATE posts SET liked_ids = json_remove(liked_ids, json_each.value) FROM json_each(liked_ids) WHERE post_id = 1 AND json_each.value = 'user_id_to_remove';
 
 
 CREATE TABLE IF NOT EXISTS users (
