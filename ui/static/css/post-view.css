@@ -40,8 +40,12 @@
 .post-reactions {
     margin-top: 30px;
 }
-
-.reactions .dislike {
+.reactions button {
+    cursor: pointer;
+    border: none;
+    background-color: transparent;
+}
+.reactions .dislike-btn {
     transform: rotate(180deg);
 }
 

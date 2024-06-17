@@ -160,20 +160,31 @@ func (t *Transport) postView(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 			return
 		}
-		comment := r.PostForm.Get("comment")
-		fmt.Println(t.User, comment)
-
-		thisPost, err := t.service.GetPostByID(id, t.User)
-		if err != nil {
-			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-			return
+		if r.PostForm.Has("post-reactions") {
+			reaction := r.PostForm.Get("post-reactions")
+			fmt.Println("post-reactions", reaction)
 		}
-		t.service.CraeteCommentary(thisPost, &models.Comment{
-			User:                *t.User,
-			Commentraie_Content: comment,
-		})
-
-		fmt.Println(thisPost.Comments)
+		if r.PostForm.Has("comment-reactions") {
+			reaction := r.PostForm.Get("comment-reactions")
+			commentId := r.PostForm.Get("comment-id")
+			fmt.Println("comment-reactions", reaction, commentId)
+		}
+		if r.PostForm.Has("create-comment") {
+			comment := r.PostForm.Get("comment")
+			thisPost, err := t.service.GetPostByID(id, t.User)
+			if err != nil {
+				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+				return
+			}
+			err = t.service.CraeteCommentary(thisPost, &models.Comment{
+				User:                *t.User,
+				Commentraie_Content: comment,
+			})
+			if err != nil {
+				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+				return
+			}
+		}
 
 		http.Redirect(w, r, fmt.Sprintf("/post/view/%d", id), http.StatusSeeOther)
 	} else {
@@ -225,7 +236,6 @@ func (t *Transport) postCreate(w http.ResponseWriter, r *http.Request) {
 			Post_Content: content,
 		}
 
-		fmt.Println(categoriesId)
 		err = t.service.CreatePost(newPost, categoriesId)
 		id := newPost.Post_ID
 		http.Redirect(w, r, fmt.Sprintf("/post/view/%d", id), http.StatusSeeOther)

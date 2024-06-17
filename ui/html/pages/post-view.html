@@ -18,18 +18,22 @@
     <div class="content">
         <p>{{.Data.Post_Content}}</p>
     </div>
-    <div class="reactions post-reactions">
-        <img class="like" src="/static/img/like-{{if .Data.Reactions.IsLike}}color{{else}}default{{end}}.svg" alt="like">
+    <form method="post" class="reactions post-reactions">
+        <button class="like-btn" type="submit" name="post-reactions" value="1">
+            <img src="/static/img/like-{{if .Data.Reactions.IsLike}}color{{else}}default{{end}}.svg" alt="like">
+        </button>
         {{.Data.Reactions.Likes}}
-        <img class="dislike" src="/static/img/like-{{if .Data.Reactions.IsDislike}}color{{else}}default{{end}}.svg" alt="dislike">
+        <button class="dislike-btn" type="submit" name="post-reactions" value="-1">
+            <img src="/static/img/like-{{if .Data.Reactions.IsDislike}}color{{else}}default{{end}}.svg" alt="dislike">
+        </button>
         {{.Data.Reactions.Dislikes}}
-    </div>
+    </form>
 
     <div class="comments">
         <h3>Comments</h3>
         <form class="create-comment" method="post">
-            <textarea class="create-comment_input" name="comment"></textarea>
-            <button class="btn create-comment_btn" type="submit">Send</button>
+            <textarea class="create-comment_input" name="comment" required></textarea>
+            <button class="btn create-comment_btn" type="submit" name="create-comment">Send</button>
         </form>
         <ul class="comments-list">
             {{range .Data.Comments}}
@@ -37,17 +41,25 @@
                 <div class="comments_user">
                     <div class="comments_user-name">{{.User.User_nickname}}</div>
                     <div class="comments_created">{{humanDate .Commentarie_Date}}</div>
+                    {{.Comment_Id}}
+
                 </div>
                 <div class="comments_content">
                     {{.Commentraie_Content}}
-                    <div class="reactions comment-reactions">
-                        <img class="like" src="/static/img/like-{{if .Reactions.IsLike}}color{{else}}default{{end}}.svg" alt="like">
+                    <form method="post" class="reactions comment-reactions">
+                        <input type="text" name="comment-id" value="{{.Comment_Id}}" hidden>
+                        <button class="like-btn" type="submit" name="comment-reactions" value="1">
+                            <img src="/static/img/like-{{if .Reactions.IsLike}}color{{else}}default{{end}}.svg"
+                                alt="like">
+                        </button>
                         {{.Reactions.Likes}}
-                        <img class="dislike" src="/static/img/like-{{if .Reactions.IsDislike}}default{{else}}default{{end}}.svg" alt="dislike">
+                        <button class="dislike-btn" type="submit" name="comment-reactions" value="-1">
+                            <img src="/static/img/like-{{if .Reactions.IsDislike}}default{{else}}default{{end}}.svg"
+                                alt="dislike">
+                        </button>
                         {{.Reactions.Dislikes}}
-                    </div>
+                    </form>
                 </div>
-
             </li>
             {{end}}
         </ul>

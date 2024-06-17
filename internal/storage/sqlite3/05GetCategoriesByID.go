@@ -2,9 +2,8 @@ package sqlite3
 
 import (
 	"fmt"
-	"strings"
-
 	"forum/internal/models"
+	"strings"
 )
 
 func (s *Sqlite) GetCategiriesByID(categoriesId []int) (*[]models.Category, error) {
