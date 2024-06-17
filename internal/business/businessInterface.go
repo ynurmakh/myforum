@@ -53,6 +53,8 @@ type _4Posts interface {
 	CreatePost(post *models.Post, categiresNum []int) error
 	// REAY TO USE
 	GetCategiries() (*[]models.Category, error)
+	// Получить количество всех постов для пагинаций
+	GetCountOfPosts() (int, error)
 }
 
 type _5Commentaries interface {
@@ -66,5 +68,3 @@ type _6Reactions interface {
 	// READY TO USE
 	ReactionsToComment(commentId int, thisUser *models.User, reactions int) error
 }
-
-// dat kol-va vseh postov dlya paginacii

@@ -3,9 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
-	"time"
 
-	"forum/internal/models"
 	"forum/internal/storage/sqlite3"
 
 	businessrealiz "forum/internal/business/businessRealiz"
@@ -24,39 +22,5 @@ func main() {
 
 	bservice := service.(*businessrealiz.Service)
 
-	fmt.Println(bservice.ReactionsToComment(3, &models.User{User_id: 1}, 1))
-	time.Sleep(1 * time.Second)
-
-	fmt.Println(bservice.ReactionsToComment(4, &models.User{User_id: 1}, 1))
-	time.Sleep(1 * time.Second)
-
-	fmt.Println(bservice.ReactionsToComment(5, &models.User{User_id: 1}, 1))
-	time.Sleep(1 * time.Second)
-
-	fmt.Println(bservice.ReactionsToComment(6, &models.User{User_id: 1}, 1))
-	time.Sleep(1 * time.Second)
-
-	fmt.Println(bservice.ReactionsToComment(3, &models.User{User_id: 1}, -1))
-	time.Sleep(1 * time.Second)
-
-	fmt.Println(bservice.ReactionsToComment(4, &models.User{User_id: 1}, -1))
-	time.Sleep(1 * time.Second)
-
-	fmt.Println(bservice.ReactionsToComment(5, &models.User{User_id: 1}, -1))
-	time.Sleep(1 * time.Second)
-
-	fmt.Println(bservice.ReactionsToComment(6, &models.User{User_id: 1}, -1))
-	time.Sleep(1 * time.Second)
-
-	fmt.Println(bservice.ReactionsToComment(3, &models.User{User_id: 1}, -1))
-	time.Sleep(1 * time.Second)
-
-	fmt.Println(bservice.ReactionsToComment(4, &models.User{User_id: 1}, -1))
-	time.Sleep(1 * time.Second)
-
-	fmt.Println(bservice.ReactionsToComment(5, &models.User{User_id: 1}, -1))
-	time.Sleep(1 * time.Second)
-
-	fmt.Println(bservice.ReactionsToComment(6, &models.User{User_id: 1}, -1))
-	time.Sleep(1 * time.Second)
+	fmt.Println(bservice.GetCountOfPosts())
 }

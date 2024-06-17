@@ -43,8 +43,6 @@ type _4Posts interface {
 	InsertNewPost(post *models.Post, cats []int) error
 
 	InsertNewComment(post *models.Post, comment *models.Comment) error
-	//
-	SelectAllPostsByCategory()
 
 	//
 	SelectAllPostsByUserID()
@@ -57,6 +55,8 @@ type _4Posts interface {
 
 	// InsertNewComment(forPost int) (commentaries *models.Comment, error)
 	SelectComentByPostID(PostId int) (*[]models.Comment, error)
+
+	SelectCountOfPosts() (int, error)
 }
 
 type _5Categories interface {
