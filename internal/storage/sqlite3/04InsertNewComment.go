@@ -4,7 +4,7 @@ import (
 	"forum/internal/models"
 )
 
-func (s *Sqlite) InsertNewComment(post *models.Post, comment *models.Comment) (error) {
+func (s *Sqlite) InsertNewComment(post *models.Post, comment *models.Comment) error {
 	query := `INSERT INTO commentaries (post_id, user_id, commentray_content) VALUES (?, ?, ?)`
 
 	res, err := s.db.Exec(query, post.Post_ID, comment.User.User_id, comment.Commentraie_Content)

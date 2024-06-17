@@ -10,7 +10,7 @@ type Business interface {
 	_3Login
 	_4Posts
 	_5Commentaries
-	// _6Reactions
+	_6Reactions
 }
 
 type _1Cookie interface {

@@ -3,12 +3,13 @@ package http
 import (
 	"bytes"
 	"fmt"
-	"forum/internal/models"
 	"log"
 	"net/http"
 	"path"
 	"strconv"
 	"strings"
+
+	"forum/internal/models"
 )
 
 type TemplateData struct {

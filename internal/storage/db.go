@@ -6,10 +6,11 @@ import (
 
 type StorageInterface interface {
 	_1Cookies
-	// UserRegistration
-	// UserLogin
+	_2UserRegistration
+	_3UserLogin
 	_4Posts
 	_5Categories
+	_6Reactions
 }
 
 type _1Cookies interface {
@@ -41,6 +42,7 @@ type _4Posts interface {
 	// Отправляеться userID(Владелец поста), заголовог поста, контент поста и катогорий массивом стрингов, в ответ жду номер post_id который был успешно создан
 	InsertNewPost(post *models.Post, cats []int) error
 
+	InsertNewComment(post *models.Post, comment *models.Comment) error
 	//
 	SelectAllPostsByCategory()
 
@@ -62,4 +64,13 @@ type _5Categories interface {
 
 	// READY TO USE Возвращает из базы все категорий
 	GetAllCategiries() (*[]models.Category, error)
+}
+
+type _6Reactions interface {
+	// 1
+	// NOT REALIZED
+	ReactionsToPost(post *models.Post, thisUser *models.User, reactions int) error
+	// 2
+	// NOT REALIZED
+	ReactionsToComment(commentId int, thisUser *models.User, reactions int) error
 }
