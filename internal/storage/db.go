@@ -56,6 +56,8 @@ type _4Posts interface {
 	SelectComentByPostID(PostId int) (*[]models.Comment, error)
 
 	SelectCountOfPosts() (int, error)
+
+	SelectMyPostReactions(thisUser *models.User) (*[]models.Post, error)
 }
 
 type _5Categories interface {

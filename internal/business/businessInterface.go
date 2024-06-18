@@ -49,6 +49,10 @@ type _4Posts interface {
 	GetPostsForHome(pageNum, onPage int, categories []int, thisUser *models.User) (*[]models.Post, error)
 	// READY TO USE
 	GetPostByID(Post_ID int, thisUser *models.User) (post *models.Post, err error)
+	// REAY TO USE
+	GetOnlyMyPosts(thisUser *models.User) (*[]models.Post, error)
+	// REAY TO USE
+	GetMyPostReactions(thisUser *models.User) (*[]models.Post, error)
 	// READY TO USE
 	CreatePost(post *models.Post, categiresNum []int) error
 	// REAY TO USE
@@ -56,9 +60,6 @@ type _4Posts interface {
 	// Получить количество всех постов для пагинаций
 	// REAY TO USE
 	GetCountOfPosts() (int, error)
-	// Получить мои посты
-	// REAY TO USE
-	GetOnlyMyPosts(thisUser *models.User) (*[]models.Post, error)
 }
 
 type _5Commentaries interface {

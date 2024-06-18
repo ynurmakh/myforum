@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"log"
-	"os"
 
 	"forum/internal/models"
 	"forum/internal/storage/sqlite3"
@@ -12,14 +11,6 @@ import (
 )
 
 func main() {
-	fmt.Println(len("123"))
-	fmt.Println(len("ф"))
-	fmt.Println(len("ы"))
-	fmt.Println(len("в"))
-	fmt.Println(len("汉字汉字汉字汉字汉字汉字汉字汉字汉字汉字"))
-	fmt.Println(len("字"))
-
-	os.Exit(1)
 	storage, err := sqlite3.InitStorage()
 	if err != nil {
 		log.Fatal(err)
@@ -31,6 +22,11 @@ func main() {
 	}
 
 	bservice := service.(*businessrealiz.Service)
-	p, _ := bservice.GetOnlyMyPosts(&models.User{User_id: 1})
-	fmt.Println(len(*p))
+
+	// fmt.Println(bservice.GetMyPostReactions(&models.User{User_id: 1}))
+	fmt.Println(bservice.GetMyPostReactions(&models.User{User_id: 2}))
+	// fmt.Println(bservice.GetMyPostReactions(&models.User{User_id: 3}))
+	// fmt.Println(bservice.GetMyPostReactions(&models.User{User_id: 4}))
+	// fmt.Println(bservice.GetMyPostReactions(&models.User{User_id: 5}))
+	// fmt.Println(bservice.GetMyPostReactions(&models.User{User_id: 6}))
 }
