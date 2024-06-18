@@ -1,12 +1,10 @@
 package sqlite3
 
 import (
-	"errors"
 	"fmt"
+	"forum/internal/models"
 	"strconv"
 	"strings"
-
-	"forum/internal/models"
 )
 
 func (s *Sqlite) ReactionsToPost(post *models.Post, thisUser *models.User, reactions int) error {
@@ -27,10 +25,6 @@ func (s *Sqlite) ReactionsToPost(post *models.Post, thisUser *models.User, react
 	}
 	if _, finded := (*disliked_ids)[thisUser.User_id]; finded {
 		disliked = true
-	}
-
-	if liked && disliked {
-		return errors.New("err: both reactins")
 	}
 
 	if reactions == 1 {

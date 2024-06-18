@@ -49,7 +49,7 @@ WHERE posts.post_id = ?`
 
 	parceTemporaryToPost(&post, temporary, categories, thisUser)
 
-	comments, err := s.SelectComentByPostID(int(post.Post_ID))
+	comments, err := s.SelectComentByPostID(int(post.Post_ID), thisUser)
 	if err != nil {
 		return nil, err
 	}

@@ -2,11 +2,10 @@ package sqlite3
 
 import (
 	"fmt"
+	"forum/internal/models"
 	"log"
 	"strconv"
 	"strings"
-
-	"forum/internal/models"
 )
 
 type temporaryStruct struct {
