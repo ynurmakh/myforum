@@ -1,3 +1,4 @@
 {
-    "CookieMaxAge":5
+    "CookieMaxAge":5,
+    "PasswordHashingSecret":"12345678"
 }

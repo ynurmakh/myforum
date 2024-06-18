@@ -28,7 +28,7 @@ type _2UserRegistration interface {
 	// Service отправляет NickName и storage возвращает ture если сущ. юзер с такой NickName, или false если нет.
 	IsExistByNickName(email string) (bool, error)
 	// Service отправляет email, NickName и password в storage, после storage возвращает true/false
-	InsertNewUserByEmailAndPass(email, nickname, password string) (bool, error)
+	InsertNewUser(email, nickname, password string) (*models.User, error)
 }
 
 type _3UserLogin interface {

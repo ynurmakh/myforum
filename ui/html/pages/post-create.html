@@ -4,9 +4,9 @@
     <form class="form" action="/post/create" method="post">
 
         <label class="label" for="label">Title</label>
-        <input class="input" id="title" type="text" name="title" required>
+        <input class="input" id="title" type="text" name="title" maxlength="50" required>
         <label class="label" for="label">Content</label>
-        <textarea class="textarea content-input" name="content" required></textarea>
+        <textarea class="textarea content-input" name="content" maxlength="2048" required></textarea>
         <label class="label" for="">Tags</label>
         <ul class="categories-list">
             {{range .Data.Categories}}

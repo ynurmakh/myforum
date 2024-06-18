@@ -23,10 +23,5 @@ func main() {
 
 	bservice := service.(*businessrealiz.Service)
 
-	// fmt.Println(bservice.GetMyPostReactions(&models.User{User_id: 1}))
-	fmt.Println(bservice.GetMyPostReactions(&models.User{User_id: 2}))
-	// fmt.Println(bservice.GetMyPostReactions(&models.User{User_id: 3}))
-	// fmt.Println(bservice.GetMyPostReactions(&models.User{User_id: 4}))
-	// fmt.Println(bservice.GetMyPostReactions(&models.User{User_id: 5}))
-	// fmt.Println(bservice.GetMyPostReactions(&models.User{User_id: 6}))
+	fmt.Println(bservice.CreateNewUser(&models.User{User_email: "form main@mail.r", User_nickname: "myick"}, "paswwored"))
 }

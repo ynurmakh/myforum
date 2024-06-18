@@ -30,7 +30,7 @@ type _2Registration interface {
 	//  при успешном созданий вернется созданный user
 	// UserIsExist Realized here
 	// NOT REALIZED
-	CreateNewUser(user models.User, password string) (*models.User, error)
+	CreateNewUser(user *models.User, password string) (*models.User, error)
 }
 
 type _3Login interface {
@@ -73,6 +73,3 @@ type _6Reactions interface {
 	// READY TO USE
 	ReactionsToComment(commentId int, thisUser *models.User, reactions int) error
 }
-
-// pojinit reakcii commentov nt parcit kolijestvo reacjii
-// get my liked posts dobavit

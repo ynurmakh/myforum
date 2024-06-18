@@ -15,7 +15,8 @@ type Service struct {
 }
 
 type ConfigType struct {
-	CookieMaxAge int `json: "CookieMaxAge"`
+	CookieMaxAge          int    `json: "CookieMaxAge"`
+	PasswordHashingSecret string `json: "PasswordHashingSecret"`
 }
 
 func InitService(b storage.StorageInterface) (business.Business, error) {

@@ -39,6 +39,7 @@ func (s *Sqlite) SelectMyPostReactions(thisUser *models.User) (*[]models.Post, e
 	FROM posts, json_each(posts.disliked_ids)
 	JOIN users on posts.user_id = users.user_id
 	WHERE value in (%v)	
+	ORDER BY posts.created_time DESC
 	`, thisUser.User_id, thisUser.User_id)
 
 	rows, err := s.db.Query(query)
