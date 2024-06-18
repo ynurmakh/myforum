@@ -187,6 +187,7 @@ func (t *Transport) postView(w http.ResponseWriter, r *http.Request) {
 
 			err = t.service.ReactionsToPost(&models.Post{Post_ID: int64(id)}, t.User, reactionInt)
 			if err != nil {
+				fmt.Println(err)
 				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 				return
 			}
@@ -212,7 +213,6 @@ func (t *Transport) postView(w http.ResponseWriter, r *http.Request) {
 				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 				return
 			}
-			fmt.Println("comment-reactions", reaction, commentId)
 		}
 		if r.PostForm.Has("create-comment") {
 			comment := r.PostForm.Get("comment")

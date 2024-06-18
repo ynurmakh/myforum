@@ -53,7 +53,7 @@ type _4Posts interface {
 	// READY TO USE
 	SelectPostByPostID(PostId int, thisUser *models.User) (*models.Post, error)
 
-	SelectComentByPostID(PostId int) (*[]models.Comment, error)
+	SelectComentByPostID(PostId int, thisUser *models.User) (*[]models.Comment, error)
 
 	SelectCountOfPosts() (int, error)
 }
