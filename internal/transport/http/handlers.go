@@ -3,12 +3,13 @@ package http
 import (
 	"bytes"
 	"fmt"
-	"forum/internal/models"
 	"log"
 	"net/http"
 	"path"
 	"strconv"
 	"strings"
+
+	"forum/internal/models"
 )
 
 type TemplateData struct {
@@ -39,7 +40,7 @@ func (t *Transport) home(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		fmt.Println(count)
+		fmt.Println(count, "pagination will be writed in the future")
 
 		posts, err := t.service.GetPostsForHome(1, 20, []int{}, t.User)
 		if err != nil {
@@ -418,7 +419,7 @@ func (t *Transport) myPosts(w http.ResponseWriter, r *http.Request) {
 
 func (t *Transport) liked(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
-		posts, err := t.service.GetPostsForHome(1, 20, []int{}, t.User)
+		posts, err := t.service.GetMyPostReactions(t.User)
 		if err != nil {
 			fmt.Println("posts not found")
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)

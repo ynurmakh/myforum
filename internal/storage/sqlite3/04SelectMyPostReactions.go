@@ -43,10 +43,10 @@ func (s *Sqlite) SelectMyPostReactions(thisUser *models.User) (*[]models.Post, e
 
 	rows, err := s.db.Query(query)
 	if err != nil {
-		return nil, nil
+		return nil, err
 	}
 	defer rows.Close()
-
+	var posts []models.Post
 	for rows.Next() {
 		var post models.Post
 		var t temporaryStruct
@@ -64,12 +64,13 @@ func (s *Sqlite) SelectMyPostReactions(thisUser *models.User) (*[]models.Post, e
 			&post.User.User_email,
 			&post.User.User_nickname,
 		)
-		fmt.Println(t)
-
 		parceTemporaryToPost(&post, &t, &post.Post_Categories, thisUser)
-
-		fmt.Println(post)
+		posts = append(posts, post)
+	}
+	err = rows.Err()
+	if err != nil {
+		return nil, err
 	}
 
-	return nil, nil
+	return &posts, nil
 }
