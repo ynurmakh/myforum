@@ -65,7 +65,7 @@ func (t *Transport) home(w http.ResponseWriter, r *http.Request) {
 				Categories *[]CheckedCategory
 				Page       interface{}
 			}{
-				Header:     "",
+				Header:     "Latest Posts",
 				Posts:      posts,
 				Categories: checkedList,
 				Page: struct {
@@ -165,7 +165,8 @@ func (t *Transport) postView(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		post, err := t.service.GetPostByID(id, t.User)
+		user, _ := r.Context().Value("user").(*models.User)
+		post, err := t.service.GetPostByID(id, user)
 		if err != nil {
 			fmt.Println(err)
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
@@ -173,7 +174,7 @@ func (t *Transport) postView(w http.ResponseWriter, r *http.Request) {
 		}
 		data := &TemplateData{
 			Data: post,
-			User: t.User,
+			User: user,
 		}
 		t.render(w, http.StatusOK, "post-view.html", data)
 	} else if r.Method == http.MethodPost {
@@ -190,6 +191,7 @@ func (t *Transport) postView(w http.ResponseWriter, r *http.Request) {
 			// t.Error = errors.New()
 			http.Redirect(w, r, fmt.Sprintf("/"), http.StatusSeeOther)
 		}
+		user, _ := r.Context().Value("user").(*models.User)
 		if r.PostForm.Has("post-reactions") {
 			reaction := r.PostForm.Get("post-reactions")
 			posttId := r.PostForm.Get("post-id")
@@ -206,7 +208,7 @@ func (t *Transport) postView(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			err = t.service.ReactionsToPost(&models.Post{Post_ID: int64(id)}, t.User, reactionInt)
+			err = t.service.ReactionsToPost(&models.Post{Post_ID: int64(id)}, user, reactionInt)
 			if err != nil {
 				fmt.Println(err)
 				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
@@ -229,7 +231,7 @@ func (t *Transport) postView(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			err = t.service.ReactionsToComment(id, t.User, reactionInt)
+			err = t.service.ReactionsToComment(id, user, reactionInt)
 			if err != nil {
 				fmt.Println(err)
 				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
@@ -238,14 +240,14 @@ func (t *Transport) postView(w http.ResponseWriter, r *http.Request) {
 		}
 		if r.PostForm.Has("create-comment") {
 			comment := r.PostForm.Get("comment")
-			thisPost, err := t.service.GetPostByID(id, t.User)
+			thisPost, err := t.service.GetPostByID(id, user)
 			if err != nil {
 				fmt.Println(err)
 				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 				return
 			}
 			err = t.service.CraeteCommentary(thisPost, &models.Comment{
-				User:                *t.User,
+				User:                *user,
 				Commentraie_Content: comment,
 			})
 			if err != nil {
@@ -271,13 +273,14 @@ func (t *Transport) postCreate(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		user, _ := r.Context().Value("user").(*models.User)
 		data := &TemplateData{
 			Data: struct {
 				Categories *[]models.Category
 			}{
 				Categories: categories,
 			},
-			User: t.User,
+			User: user,
 		}
 
 		t.render(w, http.StatusOK, "post-create.html", data)
@@ -330,8 +333,9 @@ func (t *Transport) postCreate(w http.ResponseWriter, r *http.Request) {
 
 func (t *Transport) login(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
+		user, _ := r.Context().Value("user").(*models.User)
 		data := &TemplateData{
-			User: t.User,
+			User: user,
 		}
 
 		t.render(w, http.StatusOK, "login.html", data)
@@ -373,7 +377,10 @@ func (t *Transport) login(w http.ResponseWriter, r *http.Request) {
 func (t *Transport) logout(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
 		c, _ := r.Cookie("auth")
-		fmt.Println(t.service.DeregisterByCookieValue(c.Value))
+		_, err := t.service.DeregisterByCookieValue(c.Value)
+		if err != nil {
+			fmt.Println(err)
+		}
 
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 	} else {
@@ -443,7 +450,8 @@ func (t *Transport) notFound(w http.ResponseWriter) {
 
 func (t *Transport) myPosts(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
-		posts, err := t.service.GetOnlyMyPosts(t.User)
+		user, _ := r.Context().Value("user").(*models.User)
+		posts, err := t.service.GetOnlyMyPosts(user)
 		if err != nil {
 			fmt.Println(err)
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
@@ -455,11 +463,12 @@ func (t *Transport) myPosts(w http.ResponseWriter, r *http.Request) {
 				Header     string
 				Posts      *[]models.Post
 				Categories *[]models.Category
+				Page       interface{}
 			}{
 				Header: "My posts",
 				Posts:  posts,
 			},
-			User: t.User,
+			User: user,
 		}
 		t.render(w, http.StatusOK, "home.html", data)
 	} else {
@@ -470,7 +479,8 @@ func (t *Transport) myPosts(w http.ResponseWriter, r *http.Request) {
 
 func (t *Transport) liked(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
-		posts, err := t.service.GetMyPostReactions(t.User)
+		user, _ := r.Context().Value("user").(*models.User)
+		posts, err := t.service.GetMyPostReactions(user)
 		if err != nil {
 			fmt.Println(err)
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
@@ -482,11 +492,12 @@ func (t *Transport) liked(w http.ResponseWriter, r *http.Request) {
 				Header     string
 				Posts      *[]models.Post
 				Categories *[]models.Category
+				Page       interface{}
 			}{
 				Header: "Liked posts",
 				Posts:  posts,
 			},
-			User: t.User,
+			User: user,
 		}
 		t.render(w, http.StatusOK, "home.html", data)
 	} else {

@@ -40,9 +40,10 @@
         </li>
         {{end}}
     </ul>
+    {{with .Data.Page}}
     <ul class="pagination">
-        {{$pageNum := .Data.Page.Num}}
-        {{range $i, $n := .Data.Page.Count}}
+        {{$pageNum := .Num}}
+        {{range $i, $n := .Count}}
         {{if eq $i 0}}
         {{continue}}
         {{end}}
@@ -51,6 +52,7 @@
         </li>
         {{end}}
     </ul>
+    {{end}}
     {{else}}
     <p>There's nothing to see here yet!</p>
     {{end}}
