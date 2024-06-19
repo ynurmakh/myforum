@@ -2,6 +2,10 @@ package http
 
 import (
 	"flag"
+	"forum/internal/business"
+	"forum/internal/models"
+	"forum/internal/transport"
+	"forum/ui"
 	"html/template"
 	"io/fs"
 	"log"
@@ -9,11 +13,6 @@ import (
 	"os"
 	"path/filepath"
 	"time"
-
-	"forum/internal/business"
-	"forum/internal/models"
-	"forum/internal/transport"
-	"forum/ui"
 
 	businessrealiz "forum/internal/business/businessRealiz"
 
@@ -38,12 +37,6 @@ func InitTransport(b business.Business) (transport.Transport, error) {
 	flag.StringVar(&t.port, "p", "8080", "port")
 	flag.Parse()
 	t.service = b.(*businessrealiz.Service)
-	t.User = &models.User{
-		User_id:       1,
-		User_lvl:      1,
-		User_email:    "rus@mail.ru",
-		User_nickname: "rus228",
-	}
 
 	templateCache, err := newTemplateCache()
 	if err != nil {

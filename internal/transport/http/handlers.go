@@ -3,13 +3,12 @@ package http
 import (
 	"bytes"
 	"fmt"
+	"forum/internal/models"
 	"log"
 	"net/http"
 	"path"
 	"strconv"
 	"strings"
-
-	"forum/internal/models"
 )
 
 type TemplateData struct {
@@ -33,14 +32,14 @@ func (t *Transport) home(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
 		categories, err := t.service.GetCategiries()
 
-		count, err := t.service.GetCountOfPosts()
-		if err != nil {
-			fmt.Println("posts not found")
-			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-			return
-		}
+		// count, err := t.service.GetCountOfPosts()
+		// if err != nil {
+		// 	fmt.Println("posts not found")
+		// 	http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		// 	return
+		// }
 
-		fmt.Println(count, "pagination will be writed in the future")
+		// fmt.Println(count, "pagination will be writed in the future")
 
 		posts, err := t.service.GetPostsForHome(1, 20, []int{}, t.User)
 		if err != nil {
@@ -293,13 +292,10 @@ func (t *Transport) postCreate(w http.ResponseWriter, r *http.Request) {
 
 func (t *Transport) login(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
-		// user, err := t.service.GetUser(t.UserId)
-		// if err != nil {
-		// 	fmt.Println("user not found")
-		// }
 		data := &TemplateData{
-			// User: user,
+			User: t.User,
 		}
+
 		t.render(w, http.StatusOK, "login.html", data)
 	} else if r.Method == http.MethodPost {
 		err := r.ParseForm()
@@ -307,16 +303,26 @@ func (t *Transport) login(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 			return
 		}
-		// email := r.PostForm.Get("email")
+		email := r.PostForm.Get("email")
 		// pass := r.PostForm.Get("pass")
 		// id, err := t.service.Login(email, pass)
 		// fmt.Println("login user ID:", id)
-		if err != nil {
-			fmt.Println(err)
+		// if err != nil {
+		// 	fmt.Println(err)
+		// 	return
+		// }
+		if isValidToken(email) {
+			c := &http.Cookie{
+				Name:  "auth",
+				Value: email,
+				Path:  "/",
+			}
+			http.SetCookie(w, c)
+			http.Redirect(w, r, "/user/login", http.StatusSeeOther)
+		} else {
+			fmt.Println("user not exists")
 			return
 		}
-		// t.UserId = id
-		http.Redirect(w, r, "/", http.StatusSeeOther)
 	} else {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		return
@@ -325,7 +331,14 @@ func (t *Transport) login(w http.ResponseWriter, r *http.Request) {
 
 func (t *Transport) logout(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
-		t.UserId = 0
+		// t.User = nil
+		cookie, err := r.Cookie("auth")
+		if err != nil {
+			fmt.Println("Ошибка получения куки:", err)
+			return
+		}
+		cookie.MaxAge = 0
+		http.SetCookie(w, cookie)
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 	} else {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
