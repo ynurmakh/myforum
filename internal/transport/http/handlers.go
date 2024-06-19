@@ -33,14 +33,14 @@ func (t *Transport) home(w http.ResponseWriter, r *http.Request) {
 
 		categories, err := t.service.GetCategiries()
 		if err != nil {
-			fmt.Println("posts not found")
+			fmt.Println(err)
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 			return
 		}
 
 		posts, err := t.service.GetPostsForHome(1, 20, []int{}, t.User)
 		if err != nil {
-			fmt.Println("posts not found")
+			fmt.Println(err)
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 			return
 		}
@@ -70,6 +70,7 @@ func (t *Transport) home(w http.ResponseWriter, r *http.Request) {
 	} else if r.Method == http.MethodPost {
 		categories, err := t.service.GetCategiries()
 		if err != nil {
+			fmt.Println(err)
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 			return
 		}
@@ -86,6 +87,7 @@ func (t *Transport) home(w http.ResponseWriter, r *http.Request) {
 		for _, c := range categoriesList {
 			num, err := strconv.Atoi(c)
 			if err != nil {
+				fmt.Println(err)
 				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 				return
 			}
@@ -94,7 +96,7 @@ func (t *Transport) home(w http.ResponseWriter, r *http.Request) {
 
 		posts, err := t.service.GetPostsForHome(1, 20, categoriesId, t.User)
 		if err != nil {
-			fmt.Println("posts not found")
+			fmt.Println(err)
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 			return
 		}
@@ -144,7 +146,7 @@ func (t *Transport) postView(w http.ResponseWriter, r *http.Request) {
 
 		post, err := t.service.GetPostByID(id, t.User)
 		if err != nil {
-			fmt.Println("post not found")
+			fmt.Println(err)
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 			return
 		}
@@ -172,13 +174,13 @@ func (t *Transport) postView(w http.ResponseWriter, r *http.Request) {
 			posttId := r.PostForm.Get("post-id")
 			id, err := strconv.Atoi(posttId)
 			if err != nil {
-				fmt.Println("atoi err")
+				fmt.Println(err)
 				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 				return
 			}
 			reactionInt, err := strconv.Atoi(reaction)
 			if err != nil {
-				fmt.Println("atoi err")
+				fmt.Println(err)
 				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 				return
 			}
@@ -195,19 +197,20 @@ func (t *Transport) postView(w http.ResponseWriter, r *http.Request) {
 			commentId := r.PostForm.Get("comment-id")
 			id, err := strconv.Atoi(commentId)
 			if err != nil {
-				fmt.Println("atoi err")
+				fmt.Println(err)
 				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 				return
 			}
 			reactionInt, err := strconv.Atoi(reaction)
 			if err != nil {
-				fmt.Println("atoi err")
+				fmt.Println(err)
 				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 				return
 			}
 
 			err = t.service.ReactionsToComment(id, t.User, reactionInt)
 			if err != nil {
+				fmt.Println(err)
 				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 				return
 			}
@@ -216,6 +219,7 @@ func (t *Transport) postView(w http.ResponseWriter, r *http.Request) {
 			comment := r.PostForm.Get("comment")
 			thisPost, err := t.service.GetPostByID(id, t.User)
 			if err != nil {
+				fmt.Println(err)
 				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 				return
 			}
@@ -224,6 +228,7 @@ func (t *Transport) postView(w http.ResponseWriter, r *http.Request) {
 				Commentraie_Content: comment,
 			})
 			if err != nil {
+				fmt.Println(err)
 				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 				return
 			}
@@ -240,6 +245,7 @@ func (t *Transport) postCreate(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
 		categories, err := t.service.GetCategiries()
 		if err != nil {
+			fmt.Println(err)
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 			return
 		}
@@ -267,6 +273,7 @@ func (t *Transport) postCreate(w http.ResponseWriter, r *http.Request) {
 		for _, c := range categoriesList {
 			num, err := strconv.Atoi(c)
 			if err != nil {
+				fmt.Println(err)
 				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 				return
 			}
@@ -288,6 +295,7 @@ func (t *Transport) postCreate(w http.ResponseWriter, r *http.Request) {
 
 		err = t.service.CreatePost(newPost, categoriesId)
 		if err != nil {
+			fmt.Println(err)
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 				return
 		}
@@ -360,8 +368,9 @@ func (t *Transport) signup(w http.ResponseWriter, r *http.Request) {
 	} else if r.Method == http.MethodPost {
 		err := r.ParseForm()
 		if err != nil {
-			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
-			return
+			// TODO add errors top
+			// t.Error = errors.New()
+			http.Redirect(w, r, fmt.Sprintf("/"), http.StatusSeeOther)
 		}
 		name := r.PostForm.Get("name")
 		email := r.PostForm.Get("email")
@@ -370,8 +379,9 @@ func (t *Transport) signup(w http.ResponseWriter, r *http.Request) {
 		id, err := t.service.CreateNewUser(&models.User{User_email: email, User_nickname: name}, pass)
 		fmt.Println("create user:", id, name, email, pass, passConfirm)
 		if err != nil {
-			fmt.Println(err)
-			return
+			// TODO add errors top
+			// t.Error = errors.New()
+			http.Redirect(w, r, fmt.Sprintf("/"), http.StatusSeeOther)
 		}
 
 		http.Redirect(w, r, "/", http.StatusSeeOther)
@@ -414,7 +424,7 @@ func (t *Transport) myPosts(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
 		posts, err := t.service.GetOnlyMyPosts(t.User)
 		if err != nil {
-			fmt.Println("posts not found")
+			fmt.Println(err)
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 			return
 		}
@@ -441,7 +451,7 @@ func (t *Transport) liked(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
 		posts, err := t.service.GetMyPostReactions(t.User)
 		if err != nil {
-			fmt.Println("posts not found")
+			fmt.Println(err)
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 			return
 		}
