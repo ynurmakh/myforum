@@ -1,10 +1,7 @@
 - error handler
 - logger
-- fix comment id
 
 - pagination
-- cookies
-
 
 - нужно сделать type="password" при взоде в аккаунт или при регистраций
 - длину постов надо детектить 50 для тайтола и 2048 для контента

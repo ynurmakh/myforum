@@ -3,13 +3,12 @@ package http
 import (
 	"bytes"
 	"fmt"
+	"forum/internal/models"
 	"log"
 	"net/http"
 	"path"
 	"strconv"
 	"strings"
-
-	"forum/internal/models"
 )
 
 type TemplateData struct {
@@ -30,7 +29,6 @@ func (t *Transport) home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if r.Method == http.MethodGet {
-
 		categories, err := t.service.GetCategiries()
 		if err != nil {
 			fmt.Println(err)
@@ -53,7 +51,8 @@ func (t *Transport) home(w http.ResponseWriter, r *http.Request) {
 				IsChecked:     false,
 			})
 		}
-		user := r.Context().Value("user").(*models.User)
+		user, _ := r.Context().Value("user").(*models.User)
+
 		data := &TemplateData{
 			Data: struct {
 				Header     string
@@ -66,6 +65,7 @@ func (t *Transport) home(w http.ResponseWriter, r *http.Request) {
 			},
 			User: user,
 		}
+
 		t.render(w, http.StatusOK, "home.html", data)
 	} else if r.Method == http.MethodPost {
 		categories, err := t.service.GetCategiries()
@@ -297,7 +297,7 @@ func (t *Transport) postCreate(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			fmt.Println(err)
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-				return
+			return
 		}
 		id := newPost.Post_ID
 		http.Redirect(w, r, fmt.Sprintf("/post/view/%d", id), http.StatusSeeOther)
@@ -317,7 +317,7 @@ func (t *Transport) login(w http.ResponseWriter, r *http.Request) {
 	} else if r.Method == http.MethodPost {
 		err := r.ParseForm()
 		if err != nil {
-				// TODO add errors top
+			// TODO add errors top
 			// t.Error = errors.New()
 			http.Redirect(w, r, fmt.Sprintf("/"), http.StatusSeeOther)
 		}
