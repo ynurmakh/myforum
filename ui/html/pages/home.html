@@ -7,7 +7,8 @@
         <ul class="categories-list">
             {{range .Data.Categories}}
             <li class="categories_item">
-                <input type="checkbox" name="cat" value="{{.Category_id}}" id="c{{.Category_id}}" {{if .IsChecked}}checked{{end}}>
+                <input type="checkbox" name="cat" value="{{.Category_id}}" id="c{{.Category_id}}" {{if
+                    .IsChecked}}checked{{end}}>
                 <label for="c{{.Category_id}}">{{.Category_name}}</label>
             </li>
             {{end}}
@@ -22,7 +23,6 @@
                 <div class="post-item_user-name">{{.User.User_nickname}}</div>
                 <div class="post-item_created">{{humanDate .Created_Time}}</div>
             </div>
-
             <div class="post-item_wrap">
                 <h3 class="title">
                     <a href="/post/view/{{.Post_ID}}">
@@ -37,6 +37,17 @@
                     {{end}}
                 </ul>
             </div>
+        </li>
+        {{end}}
+    </ul>
+    <ul class="pagination">
+        {{$pageNum := .Data.Page.Num}}
+        {{range $i, $n := .Data.Page.Count}}
+        {{if eq $i 0}}
+        {{continue}}
+        {{end}}
+        <li class="pagination_item">
+            <a class="{{if eq $pageNum $i}}active{{end}}" href="/page/{{$i}}">{{$i}}</a>
         </li>
         {{end}}
     </ul>

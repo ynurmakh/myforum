@@ -38,8 +38,18 @@ func (t *Transport) home(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		user, _ := r.Context().Value("user").(*models.User)
+		countPosts, err := t.service.GetCountOfPosts()
+		if err != nil {
+			fmt.Println(err)
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			return
+		}
 		countPostsOnPage := t.configs.PostsOnPage
+		countPage := countPosts / countPostsOnPage
+		if countPosts%countPostsOnPage > 0 {
+			countPage++
+		}
+		user, _ := r.Context().Value("user").(*models.User)
 		// TODO why need user
 		posts, err := t.service.GetPostsForHome(1, countPostsOnPage, idList, nil)
 		if err != nil {
@@ -53,10 +63,18 @@ func (t *Transport) home(w http.ResponseWriter, r *http.Request) {
 				Header     string
 				Posts      *[]models.Post
 				Categories *[]CheckedCategory
+				Page       interface{}
 			}{
-				Header:     "Latest Posts",
+				Header:     "",
 				Posts:      posts,
 				Categories: checkedList,
+				Page: struct {
+					Count []int
+					Num   int
+				}{
+					Count: make([]int, countPage+1),
+					Num:   0,
+				},
 			},
 			User: user,
 		}
@@ -84,6 +102,7 @@ func (t *Transport) homePages(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		// TODO add GetCountOfPosts after filters
 		countPosts, err := t.service.GetCountOfPosts()
 		if err != nil {
 			fmt.Println(err)
@@ -96,6 +115,10 @@ func (t *Transport) homePages(w http.ResponseWriter, r *http.Request) {
 		if err != nil || numPage < 1 || (numPage-1)*countPostsOnPage > countPosts {
 			t.notFound(w)
 			return
+		}
+		countPage := countPosts / countPostsOnPage
+		if countPosts%countPostsOnPage > 0 {
+			countPage++
 		}
 		user, _ := r.Context().Value("user").(*models.User)
 		posts, err := t.service.GetPostsForHome(numPage, countPostsOnPage, idList, nil)
@@ -110,10 +133,18 @@ func (t *Transport) homePages(w http.ResponseWriter, r *http.Request) {
 				Header     string
 				Posts      *[]models.Post
 				Categories *[]CheckedCategory
+				Page       interface{}
 			}{
 				Header:     "",
 				Posts:      posts,
 				Categories: checkedList,
+				Page: struct {
+					Count []int
+					Num   int
+				}{
+					Count: make([]int, countPage+1),
+					Num:   numPage,
+				},
 			},
 			User: user,
 		}

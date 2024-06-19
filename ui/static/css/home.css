@@ -71,10 +71,31 @@
 .post-item_categories-list {
     display: flex;
 }
+
 .post-item_categories-list .categories_item {
     margin: 5px 10px 0 0;
     color: rgb(0, 100, 100);
     font-size: .7em;
     font-style: italic;
     font-weight: bold;
+}
+
+.pagination {
+    display: flex;
+}
+
+.pagination_item {
+    margin-left: 10px;
+    background-color: rgb(230, 250, 240);
+}
+
+.pagination_item a {
+    display: block;
+    padding: 5px 10px;
+    font-size: 1.2em;
+    border: 1px solid transparent;
+}
+.pagination_item a.active {
+    border-color: rgb(220, 220, 220);
+    border-radius: 10%;
 }
