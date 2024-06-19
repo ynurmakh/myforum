@@ -35,7 +35,7 @@ type _2Registration interface {
 
 type _3Login interface {
 	// READY TO USE
-	LoginByEmailAndPass(email, pass string) (*models.User, error)
+	LoginByEmailAndPass(email, pass, uuid string) (*models.User, error)
 }
 
 type _4Posts interface {

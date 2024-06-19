@@ -46,4 +46,4 @@ CREATE TABLE "commentaries" (
 
 UPDATE cookies
 SET last_call = datetime(CURRENT_TIMESTAMP) , livetime = 5
-WHERE cookies.cookie = 'cooki'
+WHERE cookies.cookie = 'cooki';

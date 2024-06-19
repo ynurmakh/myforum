@@ -53,6 +53,7 @@ func (t *Transport) home(w http.ResponseWriter, r *http.Request) {
 				IsChecked:     false,
 			})
 		}
+		user := r.Context().Value("user").(*models.User)
 		data := &TemplateData{
 			Data: struct {
 				Header     string
@@ -63,7 +64,7 @@ func (t *Transport) home(w http.ResponseWriter, r *http.Request) {
 				Posts:      posts,
 				Categories: checkedCategories,
 			},
-			User: t.User,
+			User: user,
 		}
 		t.render(w, http.StatusOK, "home.html", data)
 	} else if r.Method == http.MethodPost {
@@ -273,17 +274,27 @@ func (t *Transport) postCreate(w http.ResponseWriter, r *http.Request) {
 		}
 		title := r.PostForm.Get("title")
 		content := r.PostForm.Get("content")
+		u := r.Context().Value("user")
+		user, ok := u.(*models.User)
+		if !ok {
+			// internal
+		}
+
 		newPost := &models.Post{
-			User:         *t.User,
+			User:         *user,
 			Post_Title:   title,
 			Post_Content: content,
 		}
 
 		err = t.service.CreatePost(newPost, categoriesId)
+<<<<<<< HEAD
 		if err != nil {
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 				return
 		}
+=======
+		fmt.Println(err)
+>>>>>>> f65dc9961d5eb7636f773934b721c03939680936
 		id := newPost.Post_ID
 		http.Redirect(w, r, fmt.Sprintf("/post/view/%d", id), http.StatusSeeOther)
 	} else {
@@ -308,40 +319,26 @@ func (t *Transport) login(w http.ResponseWriter, r *http.Request) {
 		}
 		email := r.PostForm.Get("email")
 		pass := r.PostForm.Get("pass")
-		// cook, err := r.Cookie("auth")
-		// var newUuid string
-		// if err != nil {
-		// 	newUuid, err = t.service.CreateNewCookie()
-		// 	if err != nil {
-		// 		// internal
-		// 	}
-		// 	http.SetCookie(w, &http.Cookie{Name: "auth", Value: newUuid})
-		// 	cook = &http.Cookie{Name: "auth", Value: newUuid}
-		// }
+		cook, err := r.Cookie("auth")
+		var newUuid string
+		if err != nil {
+			newUuid, err = t.service.CreateNewCookie()
+			if err != nil {
+				// internal
+			}
+			http.SetCookie(w, &http.Cookie{Name: "auth", Value: newUuid, Path: "/"})
+			cook = &http.Cookie{Name: "auth", Value: newUuid, Path: "/"}
+		}
 
-		user, err := t.service.LoginByEmailAndPass(email, pass)
-		// user, err := t.service.LoginByEmailAndPass(email, pass, cook.Value)
+		// user, err := t.service.LoginByEmailAndPass(email, pass)
+		_, err = t.service.LoginByEmailAndPass(email, pass, cook.Value)
 		if err != nil {
 			// TODO add errors top
 			// t.Error = errors.New()
 			http.Redirect(w, r, fmt.Sprintf("/"), http.StatusSeeOther)
 		}
-		if user == nil {
-			// Login por password not correct
-		}
 
-		if isValidToken(email) {
-			c := &http.Cookie{
-				Name:  "auth",
-				Value: email,
-				Path:  "/",
-			}
-			http.SetCookie(w, c)
-			http.Redirect(w, r, "/user/login", http.StatusSeeOther)
-		} else {
-			fmt.Println("user not exists")
-			return
-		}
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 	} else {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		return
@@ -350,14 +347,9 @@ func (t *Transport) login(w http.ResponseWriter, r *http.Request) {
 
 func (t *Transport) logout(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
-		// t.User = nil
-		cookie, err := r.Cookie("auth")
-		if err != nil {
-			fmt.Println("Ошибка получения куки:", err)
-			return
-		}
-		cookie.MaxAge = 0
-		http.SetCookie(w, cookie)
+		c, _ := r.Cookie("auth")
+		fmt.Println(t.service.DeregisterByCookieValue(c.Value))
+
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 	} else {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
@@ -375,12 +367,12 @@ func (t *Transport) signup(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 			return
 		}
-		// name := r.PostForm.Get("name")
-		// email := r.PostForm.Get("email")
-		// pass := r.PostForm.Get("pass")
-		// passConfirm := r.PostForm.Get("pass-confirm")
-		// id, err := t.service.CreateUser(name, email, pass)
-		// fmt.Println("create user:", id, name, email, pass, passConfirm)
+		name := r.PostForm.Get("name")
+		email := r.PostForm.Get("email")
+		pass := r.PostForm.Get("pass")
+		passConfirm := r.PostForm.Get("pass-confirm")
+		id, err := t.service.CreateNewUser(&models.User{User_email: email, User_nickname: name}, pass)
+		fmt.Println("create user:", id, name, email, pass, passConfirm)
 		if err != nil {
 			fmt.Println(err)
 			return
