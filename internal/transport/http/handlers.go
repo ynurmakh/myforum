@@ -305,18 +305,19 @@ func (t *Transport) login(w http.ResponseWriter, r *http.Request) {
 		}
 		email := r.PostForm.Get("email")
 		pass := r.PostForm.Get("pass")
-		cook, err := r.Cookie("auth")
-		var newUuid string
-		if err != nil {
-			newUuid, err = t.service.CreateNewCookie()
-			if err != nil {
-				// internal
-			}
-			http.SetCookie(w, &http.Cookie{Name: "auth", Value: newUuid})
-			cook = &http.Cookie{Name: "auth", Value: newUuid}
-		}
+		// cook, err := r.Cookie("auth")
+		// var newUuid string
+		// if err != nil {
+		// 	newUuid, err = t.service.CreateNewCookie()
+		// 	if err != nil {
+		// 		// internal
+		// 	}
+		// 	http.SetCookie(w, &http.Cookie{Name: "auth", Value: newUuid})
+		// 	cook = &http.Cookie{Name: "auth", Value: newUuid}
+		// }
 
-		user, err := t.service.LoginByEmailAndPass(email, pass, cook.Value)
+		user, err := t.service.LoginByEmailAndPass(email, pass)
+		// user, err := t.service.LoginByEmailAndPass(email, pass, cook.Value)
 		if err != nil {
 			fmt.Println(err)
 			return

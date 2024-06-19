@@ -1,99 +1,4 @@
 -- database: /home/student/forum/internal/storage/sqlite3/database.db
-
-
-
--- сортировка по категориям
-
--- SELECT post_id, categories_id
--- FROM posts, json_each(posts.categories_id)
--- WHERE json_each.value in (1,2,3); "1,2,3,4"
-
-
-
--- Получение 1го поста сджойнам
-
--- SELECT posts.post_id, posts.post_title, posts.post_content, posts.created_time, users.user_id, users.user_lvl, users.user_email, users.user_nickname
--- FROM posts
--- JOIN users ON posts.user_id = users.user_id
--- WHERE posts.post_id = ?;
-
-
--- filter
-
--- WITH filtered_posts AS (
---     SELECT 
---         p.post_id,
---         p.user_id,
---         p.post_title,
---         p.post_content,
---         p.created_time,
---         c.category_id,
---         c.category_name,
---         ROW_NUMBER() OVER (PARTITION BY p.post_id ORDER BY c.category_id) AS row_num
---     FROM 
---         posts p
---     JOIN 
---         json_each(p.categories_id) AS j ON CAST(j.value AS INTEGER) IN (1,2)
---     JOIN 
---         categories_name c ON j.value = c.category_id
--- )
--- SELECT 
---     post_id,
---     user_id,
---     post_title,
---     post_content,
---     created_time,
---     category_id,
---     category_name
--- FROM 
---     filtered_posts
--- WHERE 
---     row_num = 1;
-
-
--- Поставить лайк
--- UPDATE posts SET liked_ids = json_insert(liked_ids, '$[#]', 'new_user_id') WHERE post_id = 1;
-
-	SELECT 
-	posts.post_id,
-	posts.post_title,
-	posts.post_content,
-	posts.created_time,
-	posts.categories_id,
-	posts.liked_ids,
-	posts.disliked_ids,
-	users.user_id,
-	users.user_lvl,
-	users.user_email,
-	users.user_nickname
-	FROM posts, json_each(posts.liked_ids)
-	JOIN users on posts.user_id = users.user_id
-	WHERE value in (1)
-	ORDER BY posts.created_time DESC
-	UNION
-	SELECT 
-	posts.post_id,
-	posts.post_title,
-	posts.post_content,
-	posts.created_time,
-	posts.categories_id,
-	posts.liked_ids,
-	posts.disliked_ids,
-	users.user_id,
-	users.user_lvl,
-	users.user_email,
-	users.user_nickname
-	FROM posts, json_each(posts.disliked_ids)
-	JOIN users on posts.user_id = users.user_id
-	WHERE value in (1)	
-	ORDER BY posts.created_time DESC;
-
-
-
-
--- UPDATE posts SET liked_ids = json_remove(liked_ids, json_each.value) FROM json_each(liked_ids) WHERE post_id = 1 AND json_each.value = 'user_id_to_remove';
-
-
 CREATE TABLE IF NOT EXISTS users (
     user_id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_lvl INTEGER NOT NULL DEFAULT 1,
@@ -138,4 +43,7 @@ CREATE TABLE "commentaries" (
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
-INSERT INTO commentaries (post_id, user_id, commentray_content) VALUES (5, 1, 'hello mir')
+
+UPDATE cookies
+SET last_call = datetime(CURRENT_TIMESTAMP) , livetime = 5
+WHERE cookies.cookie = 'cooki'
