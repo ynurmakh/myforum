@@ -30,15 +30,13 @@ func (t *Transport) home(w http.ResponseWriter, r *http.Request) {
 		checkedCategories := r.Form["cat"]
 		checkedList, idList, err := t.GetCategoriesForTemplate(checkedCategories)
 		if err != nil {
-			fmt.Println(err)
-			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			t.internalServerError(w, err)
 			return
 		}
 
 		countPosts, err := t.service.GetCountOfPosts()
 		if err != nil {
-			fmt.Println(err)
-			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			t.internalServerError(w, err)
 			return
 		}
 		countPostsOnPage := t.configs.PostsOnPage
@@ -50,8 +48,7 @@ func (t *Transport) home(w http.ResponseWriter, r *http.Request) {
 		// TODO why need user
 		posts, err := t.service.GetPostsForHome(1, countPostsOnPage, idList, nil)
 		if err != nil {
-			fmt.Println(err)
-			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			t.internalServerError(w, err)
 			return
 		}
 
@@ -94,16 +91,14 @@ func (t *Transport) homePages(w http.ResponseWriter, r *http.Request) {
 		checkedCategories := r.Form["cat"]
 		checkedList, idList, err := t.GetCategoriesForTemplate(checkedCategories)
 		if err != nil {
-			fmt.Println(err)
-			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			t.internalServerError(w, err)
 			return
 		}
 
 		// TODO add GetCountOfPosts after filters
 		countPosts, err := t.service.GetCountOfPosts()
 		if err != nil {
-			fmt.Println(err)
-			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			t.internalServerError(w, err)
 			return
 		}
 		countPostsOnPage := t.configs.PostsOnPage
@@ -120,8 +115,7 @@ func (t *Transport) homePages(w http.ResponseWriter, r *http.Request) {
 		user, _ := r.Context().Value("user").(*models.User)
 		posts, err := t.service.GetPostsForHome(numPage, countPostsOnPage, idList, nil)
 		if err != nil {
-			fmt.Println(err)
-			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			t.internalServerError(w, err)
 			return
 		}
 
@@ -165,8 +159,7 @@ func (t *Transport) postView(w http.ResponseWriter, r *http.Request) {
 		user, _ := r.Context().Value("user").(*models.User)
 		post, err := t.service.GetPostByID(id, user)
 		if err != nil {
-			fmt.Println(err)
-			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			t.internalServerError(w, err)
 			return
 		}
 		data := &TemplateData{
@@ -199,21 +192,18 @@ func (t *Transport) postView(w http.ResponseWriter, r *http.Request) {
 			posttId := r.PostForm.Get("post-id")
 			id, err := strconv.Atoi(posttId)
 			if err != nil {
-				fmt.Println(err)
-				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+				t.internalServerError(w, err)
 				return
 			}
 			reactionInt, err := strconv.Atoi(reaction)
 			if err != nil {
-				fmt.Println(err)
-				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+				t.internalServerError(w, err)
 				return
 			}
 
 			err = t.service.ReactionsToPost(&models.Post{Post_ID: int64(id)}, user, reactionInt)
 			if err != nil {
-				fmt.Println(err)
-				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+				t.internalServerError(w, err)
 				return
 			}
 		}
@@ -222,21 +212,18 @@ func (t *Transport) postView(w http.ResponseWriter, r *http.Request) {
 			commentId := r.PostForm.Get("comment-id")
 			id, err := strconv.Atoi(commentId)
 			if err != nil {
-				fmt.Println(err)
-				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+				t.internalServerError(w, err)
 				return
 			}
 			reactionInt, err := strconv.Atoi(reaction)
 			if err != nil {
-				fmt.Println(err)
-				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+				t.internalServerError(w, err)
 				return
 			}
 
 			err = t.service.ReactionsToComment(id, user, reactionInt)
 			if err != nil {
-				fmt.Println(err)
-				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+				t.internalServerError(w, err)
 				return
 			}
 		}
@@ -244,8 +231,7 @@ func (t *Transport) postView(w http.ResponseWriter, r *http.Request) {
 			comment := r.PostForm.Get("comment")
 			thisPost, err := t.service.GetPostByID(id, user)
 			if err != nil {
-				fmt.Println(err)
-				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+				t.internalServerError(w, err)
 				return
 			}
 			err = t.service.CraeteCommentary(thisPost, &models.Comment{
@@ -253,8 +239,7 @@ func (t *Transport) postView(w http.ResponseWriter, r *http.Request) {
 				Commentraie_Content: comment,
 			})
 			if err != nil {
-				fmt.Println(err)
-				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+				t.internalServerError(w, err)
 				return
 			}
 		}
@@ -270,8 +255,7 @@ func (t *Transport) postCreate(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
 		categories, err := t.service.GetCategiries()
 		if err != nil {
-			fmt.Println(err)
-			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			t.internalServerError(w, err)
 			return
 		}
 
@@ -299,8 +283,7 @@ func (t *Transport) postCreate(w http.ResponseWriter, r *http.Request) {
 		for _, c := range categoriesList {
 			num, err := strconv.Atoi(c)
 			if err != nil {
-				fmt.Println(err)
-				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+				t.internalServerError(w, err)
 				return
 			}
 			categoriesId = append(categoriesId, num)
@@ -321,8 +304,7 @@ func (t *Transport) postCreate(w http.ResponseWriter, r *http.Request) {
 
 		err = t.service.CreatePost(newPost, categoriesId)
 		if err != nil {
-			fmt.Println(err)
-			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			t.internalServerError(w, err)
 			return
 		}
 		id := newPost.Post_ID
@@ -430,8 +412,7 @@ func (t *Transport) myPosts(w http.ResponseWriter, r *http.Request) {
 		user, _ := r.Context().Value("user").(*models.User)
 		posts, err := t.service.GetOnlyMyPosts(user)
 		if err != nil {
-			fmt.Println(err)
-			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			t.internalServerError(w, err)
 			return
 		}
 
@@ -459,8 +440,7 @@ func (t *Transport) liked(w http.ResponseWriter, r *http.Request) {
 		user, _ := r.Context().Value("user").(*models.User)
 		posts, err := t.service.GetMyPostReactions(user)
 		if err != nil {
-			fmt.Println(err)
-			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			t.internalServerError(w, err)
 			return
 		}
 

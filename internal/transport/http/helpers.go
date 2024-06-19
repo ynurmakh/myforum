@@ -41,7 +41,12 @@ func (t *Transport) render(w http.ResponseWriter, status int, page string, data 
 }
 
 func (t *Transport) notFound(w http.ResponseWriter) {
-	t.render(w, http.StatusNotFound, "notfound.html", &TemplateData{Data: "Page Not Found"})
+	t.render(w, http.StatusNotFound, "error.html", &TemplateData{Data: "Page Not Found"})
+}
+
+func (t *Transport) internalServerError(w http.ResponseWriter, err error) {
+	fmt.Println(err)
+	t.render(w, http.StatusInternalServerError, "error.html", &TemplateData{Data: http.StatusText(http.StatusInternalServerError)})
 }
 
 func (t *Transport) GetCategoriesForTemplate(categoriesList []string) (checkedList *[]CheckedCategory, idList []int, err error) {
