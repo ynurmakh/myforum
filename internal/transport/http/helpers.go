@@ -1,11 +1,47 @@
 package http
 
-import "strconv"
+import (
+	"bytes"
+	"fmt"
+	"log"
+	"net/http"
+	"strconv"
+	"strings"
+)
 
 type CheckedCategory struct {
 	Category_id   int
 	Category_name string
 	IsChecked     bool
+}
+
+func (t *Transport) render(w http.ResponseWriter, status int, page string, data *TemplateData) {
+	ts, ok := t.templateCache[page]
+	if !ok {
+		err := fmt.Errorf("the template %s does not exist", page)
+		log.Println(err)
+		return
+	}
+
+	pageName := strings.Split(page, ".")[0]
+	data.PageName = pageName
+
+	buf := new(bytes.Buffer)
+
+	err := ts.ExecuteTemplate(buf, "base", data)
+	if err != nil {
+		log.Println(err)
+		t.notFound(w)
+		return
+	}
+
+	w.WriteHeader(status)
+
+	buf.WriteTo(w)
+}
+
+func (t *Transport) notFound(w http.ResponseWriter) {
+	t.render(w, http.StatusNotFound, "notfound.html", &TemplateData{Data: "Page Not Found"})
 }
 
 func (t *Transport) GetCategoriesForTemplate(categoriesList []string) (checkedList *[]CheckedCategory, idList []int, err error) {

@@ -1,14 +1,11 @@
 package http
 
 import (
-	"bytes"
 	"fmt"
 	"forum/internal/models"
-	"log"
 	"net/http"
 	"path"
 	"strconv"
-	"strings"
 )
 
 type TemplateData struct {
@@ -422,35 +419,6 @@ func (t *Transport) signup(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		return
 	}
-}
-
-func (t *Transport) render(w http.ResponseWriter, status int, page string, data *TemplateData) {
-	ts, ok := t.templateCache[page]
-	if !ok {
-		err := fmt.Errorf("the template %s does not exist", page)
-		log.Println(err)
-		return
-	}
-
-	pageName := strings.Split(page, ".")[0]
-	data.PageName = pageName
-
-	buf := new(bytes.Buffer)
-
-	err := ts.ExecuteTemplate(buf, "base", data)
-	if err != nil {
-		log.Println(err)
-		t.notFound(w)
-		return
-	}
-
-	w.WriteHeader(status)
-
-	buf.WriteTo(w)
-}
-
-func (t *Transport) notFound(w http.ResponseWriter) {
-	t.render(w, http.StatusNotFound, "notfound.html", &TemplateData{Data: "Page Not Found"})
 }
 
 func (t *Transport) myPosts(w http.ResponseWriter, r *http.Request) {
