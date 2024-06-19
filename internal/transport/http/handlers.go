@@ -185,13 +185,18 @@ func (t *Transport) postView(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		user, _ := r.Context().Value("user").(*models.User)
+		if user == nil {
+			http.Redirect(w, r, fmt.Sprintf("/post/view/%d", id), http.StatusSeeOther)
+			return
+		}
+
 		err = r.ParseForm()
 		if err != nil {
 			// TODO add errors top
 			// t.Error = errors.New()
 			http.Redirect(w, r, fmt.Sprintf("/"), http.StatusSeeOther)
 		}
-		user, _ := r.Context().Value("user").(*models.User)
 		if r.PostForm.Has("post-reactions") {
 			reaction := r.PostForm.Get("post-reactions")
 			posttId := r.PostForm.Get("post-id")
