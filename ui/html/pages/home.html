@@ -3,11 +3,11 @@
     <h2>{{.Data.Header}}</h2>
     {{if .Data.Posts}}
     {{if .Data.Categories}}
-    <form action="/" method="post" class="categories-form">
+    <form action="/" class="categories-form">
         <ul class="categories-list">
             {{range .Data.Categories}}
             <li class="categories_item">
-                <input type="checkbox" name="categories" value="{{.Category_id}}" id="c{{.Category_id}}" {{if .IsChecked}}checked{{end}}>
+                <input type="checkbox" name="cat" value="{{.Category_id}}" id="c{{.Category_id}}" {{if .IsChecked}}checked{{end}}>
                 <label for="c{{.Category_id}}">{{.Category_name}}</label>
             </li>
             {{end}}

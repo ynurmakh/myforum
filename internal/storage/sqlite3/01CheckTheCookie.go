@@ -57,7 +57,6 @@ func (s *Sqlite) CheckTheCookie(cookie string, livetime int) (*models.User, erro
 			if err != nil {
 				return nil, nil
 			}
-			fmt.Println(user, "<<<")
 			return user, nil
 
 		}

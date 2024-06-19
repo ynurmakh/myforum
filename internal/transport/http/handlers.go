@@ -17,105 +17,37 @@ type TemplateData struct {
 	PageName string
 }
 
-type CheckedCategory struct {
-	Category_id   int
-	Category_name string
-	IsChecked     bool
-}
-
 func (t *Transport) home(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
 		t.notFound(w)
 		return
 	}
 	if r.Method == http.MethodGet {
-		categories, err := t.service.GetCategiries()
-		if err != nil {
-			fmt.Println(err)
-			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-			return
-		}
-
-		posts, err := t.service.GetPostsForHome(1, 20, []int{}, t.User)
-		if err != nil {
-			fmt.Println(err)
-			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-			return
-		}
-
-		checkedCategories := &[]CheckedCategory{}
-		for _, c := range *categories {
-			*checkedCategories = append(*checkedCategories, CheckedCategory{
-				Category_id:   c.Category_id,
-				Category_name: c.Category_name,
-				IsChecked:     false,
-			})
-		}
-		user, _ := r.Context().Value("user").(*models.User)
-
-		data := &TemplateData{
-			Data: struct {
-				Header     string
-				Posts      *[]models.Post
-				Categories *[]CheckedCategory
-			}{
-				Header:     "Latest Posts",
-				Posts:      posts,
-				Categories: checkedCategories,
-			},
-			User: user,
-		}
-
-		t.render(w, http.StatusOK, "home.html", data)
-	} else if r.Method == http.MethodPost {
-		categories, err := t.service.GetCategiries()
-		if err != nil {
-			fmt.Println(err)
-			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-			return
-		}
-
-		err = r.ParseForm()
+		err := r.ParseForm()
 		if err != nil {
 			// TODO add errors top
 			// t.Error = errors.New()
 			http.Redirect(w, r, fmt.Sprintf("/"), http.StatusSeeOther)
 		}
 
-		categoriesList := r.PostForm["categories"]
-		categoriesId := []int{}
-		for _, c := range categoriesList {
-			num, err := strconv.Atoi(c)
-			if err != nil {
-				fmt.Println(err)
-				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-				return
-			}
-			categoriesId = append(categoriesId, num)
-		}
-
-		posts, err := t.service.GetPostsForHome(1, 20, categoriesId, t.User)
+		checkedCategories := r.Form["cat"]
+		checkedList, idList, err := t.GetCategoriesForTemplate(checkedCategories)
 		if err != nil {
 			fmt.Println(err)
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 			return
 		}
-		checkedCategories := &[]CheckedCategory{}
-		for _, c := range *categories {
-			checked := func() bool {
-				for _, num := range categoriesId {
-					if num == c.Category_id {
-						return true
-					}
-				}
-				return false
-			}()
-			*checkedCategories = append(*checkedCategories, CheckedCategory{
-				Category_id:   c.Category_id,
-				Category_name: c.Category_name,
-				IsChecked:     checked,
-			})
+
+		user, _ := r.Context().Value("user").(*models.User)
+		countPostsOnPage := t.configs.PostsOnPage
+		// TODO why need user
+		posts, err := t.service.GetPostsForHome(1, countPostsOnPage, idList, nil)
+		if err != nil {
+			fmt.Println(err)
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			return
 		}
+
 		data := &TemplateData{
 			Data: struct {
 				Header     string
@@ -124,10 +56,68 @@ func (t *Transport) home(w http.ResponseWriter, r *http.Request) {
 			}{
 				Header:     "Latest Posts",
 				Posts:      posts,
-				Categories: checkedCategories,
+				Categories: checkedList,
 			},
-			User: t.User,
+			User: user,
 		}
+
+		t.render(w, http.StatusOK, "home.html", data)
+	} else {
+		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+		return
+	}
+}
+
+func (t *Transport) homePages(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodGet {
+		err := r.ParseForm()
+		if err != nil {
+			// TODO add errors top
+			// t.Error = errors.New()
+			http.Redirect(w, r, fmt.Sprintf("/"), http.StatusSeeOther)
+		}
+		checkedCategories := r.Form["cat"]
+		checkedList, idList, err := t.GetCategoriesForTemplate(checkedCategories)
+		if err != nil {
+			fmt.Println(err)
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			return
+		}
+
+		countPosts, err := t.service.GetCountOfPosts()
+		if err != nil {
+			fmt.Println(err)
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			return
+		}
+		countPostsOnPage := t.configs.PostsOnPage
+		numPageString := path.Base(r.URL.Path)
+		numPage, err := strconv.Atoi(numPageString)
+		if err != nil || numPage < 1 || (numPage-1)*countPostsOnPage > countPosts {
+			t.notFound(w)
+			return
+		}
+		user, _ := r.Context().Value("user").(*models.User)
+		posts, err := t.service.GetPostsForHome(numPage, countPostsOnPage, idList, nil)
+		if err != nil {
+			fmt.Println(err)
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			return
+		}
+
+		data := &TemplateData{
+			Data: struct {
+				Header     string
+				Posts      *[]models.Post
+				Categories *[]CheckedCategory
+			}{
+				Header:     "",
+				Posts:      posts,
+				Categories: checkedList,
+			},
+			User: user,
+		}
+
 		t.render(w, http.StatusOK, "home.html", data)
 	} else {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
