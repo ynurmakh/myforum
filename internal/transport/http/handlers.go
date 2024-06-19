@@ -287,14 +287,10 @@ func (t *Transport) postCreate(w http.ResponseWriter, r *http.Request) {
 		}
 
 		err = t.service.CreatePost(newPost, categoriesId)
-<<<<<<< HEAD
 		if err != nil {
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 				return
 		}
-=======
-		fmt.Println(err)
->>>>>>> f65dc9961d5eb7636f773934b721c03939680936
 		id := newPost.Post_ID
 		http.Redirect(w, r, fmt.Sprintf("/post/view/%d", id), http.StatusSeeOther)
 	} else {
