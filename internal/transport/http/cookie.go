@@ -1,33 +1,32 @@
 package http
 
 import (
+	"context"
 	"net/http"
 )
 
 func (t *Transport) CookiesMiddlware(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		c, err := r.Cookie("session")
+		cookie, err := r.Cookie("auth")
 		if err != nil {
 
-			// get new cookie
-			//
-			cookie := &http.Cookie{
-				Name:  "auth",
-				Value: "kek",
-				Path:  "/",
+			uuid, err := t.service.CreateNewCookie()
+			if err != nil {
+				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+				return
 			}
-			http.SetCookie(w, cookie)
-		}
+			http.SetCookie(w, &http.Cookie{Name: "auth", Value: uuid})
 
-		if !checkAuth(c.Value) {
-			http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+			ctx := context.WithValue(r.Context(), "user", nil)
+			next(w, r.WithContext(ctx))
 			return
 		}
-
-		next(w, r)
+		user, err := t.service.GetUserByCookie(cookie.Value)
+		if err != nil {
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			return
+		}
+		ctx := context.WithValue(r.Context(), "user", user)
+		next(w, r.WithContext(ctx))
 	}
-}
-
-func checkAuth(s string) bool {
-	return false
 }

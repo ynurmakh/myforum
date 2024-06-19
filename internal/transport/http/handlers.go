@@ -304,13 +304,28 @@ func (t *Transport) login(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		email := r.PostForm.Get("email")
-		// pass := r.PostForm.Get("pass")
-		// id, err := t.service.Login(email, pass)
-		// fmt.Println("login user ID:", id)
+		pass := r.PostForm.Get("pass")
+		// cook, err := r.Cookie("auth")
+		// var newUuid string
 		// if err != nil {
-		// 	fmt.Println(err)
-		// 	return
+		// 	newUuid, err = t.service.CreateNewCookie()
+		// 	if err != nil {
+		// 		// internal
+		// 	}
+		// 	http.SetCookie(w, &http.Cookie{Name: "auth", Value: newUuid})
+		// 	cook = &http.Cookie{Name: "auth", Value: newUuid}
 		// }
+
+		user, err := t.service.LoginByEmailAndPass(email, pass)
+		// user, err := t.service.LoginByEmailAndPass(email, pass, cook.Value)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		if user == nil {
+			// Login por password not correct
+		}
+
 		if isValidToken(email) {
 			c := &http.Cookie{
 				Name:  "auth",
