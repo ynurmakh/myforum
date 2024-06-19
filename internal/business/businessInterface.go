@@ -29,12 +29,12 @@ type _2Registration interface {
 	// transport запрашивает у service создать user
 	//  при успешном созданий вернется созданный user
 	// UserIsExist Realized here
-	// NOT REALIZED
+	// READY TO USE
 	CreateNewUser(user *models.User, password string) (*models.User, error)
 }
 
 type _3Login interface {
-	// NOT REALIZED
+	// READY TO USE
 	LoginByEmailAndPass(email, pass string) (*models.User, error)
 }
 

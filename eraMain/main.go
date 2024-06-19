@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 	"log"
+	"time"
 
-	"forum/internal/models"
 	"forum/internal/storage/sqlite3"
 
 	businessrealiz "forum/internal/business/businessRealiz"
@@ -22,6 +22,10 @@ func main() {
 	}
 
 	bservice := service.(*businessrealiz.Service)
+	_ = bservice
+	for {
 
-	fmt.Println(bservice.CreateNewUser(&models.User{User_email: "form main@mail.r", User_nickname: "myick"}, "paswwored"))
+		fmt.Println(storage.CheckTheCookie("cooki", 1))
+		time.Sleep(1 * time.Second)
+	}
 }

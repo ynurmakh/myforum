@@ -15,8 +15,8 @@ type Service struct {
 }
 
 type ConfigType struct {
-	CookieMaxAge          int    `json: "CookieMaxAge"`
-	PasswordHashingSecret string `json: "PasswordHashingSecret"`
+	CookieMaxAge          int    `json:"CookieMaxAge"`
+	PasswordHashingSecret string `json:"PasswordHashingSecret"`
 }
 
 func InitService(b storage.StorageInterface) (business.Business, error) {
@@ -29,7 +29,6 @@ func InitService(b storage.StorageInterface) (business.Business, error) {
 		storage: b.(*sqlite3.Sqlite),
 		configs: config,
 	}
-
 	// TODO Подключение к БД
 
 	// TODO Возврать Структуры
