@@ -1,5 +1,6 @@
 package businessrealiz
 
 func (s *Service) DeregisterByCookieValue(sessionValue string) (bool, error) {
-	return false,nil
+	_, err := s.storage.KillCookie(sessionValue)
+	return false, err
 }

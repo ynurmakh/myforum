@@ -340,14 +340,9 @@ func (t *Transport) login(w http.ResponseWriter, r *http.Request) {
 
 func (t *Transport) logout(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
-		// t.User = nil
-		cookie, err := r.Cookie("auth")
-		if err != nil {
-			fmt.Println("Ошибка получения куки:", err)
-			return
-		}
-		cookie.MaxAge = 0
-		http.SetCookie(w, cookie)
+		c, _ := r.Cookie("auth")
+		fmt.Println(t.service.DeregisterByCookieValue(c.Value))
+
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 	} else {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
