@@ -2,9 +2,9 @@ package sqlite3
 
 import (
 	"database/sql"
-	"time"
-
+	"fmt"
 	"forum/internal/models"
+	"time"
 )
 
 func (s *Sqlite) CheckTheCookie(cookie string, livetime int) (*models.User, error) {
@@ -57,7 +57,9 @@ func (s *Sqlite) CheckTheCookie(cookie string, livetime int) (*models.User, erro
 			if err != nil {
 				return nil, nil
 			}
+			fmt.Println(user, "<<<")
 			return user, nil
+
 		}
 		return nil, nil
 	}
@@ -106,10 +108,12 @@ func (s *Sqlite) getUserByUserId(id int64) (*models.User, error) {
 	`
 	row := s.db.QueryRow(query, id)
 	user := &models.User{}
-	if err := row.Scan(&user.User_lvl, user.User_email, user.User_nickname); err == nil {
-		return user, nil
+	err := row.Scan(&user.User_lvl, &user.User_email, &user.User_nickname)
+	if err != nil {
+		return nil, err
 	}
-	return nil, nil
+	user.User_id = id
+	return user, nil
 }
 
 func (s *Sqlite) sbrosCookies(cookies string) error {

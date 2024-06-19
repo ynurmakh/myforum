@@ -2,6 +2,7 @@ package http
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 )
 
@@ -15,7 +16,7 @@ func (t *Transport) CookiesMiddlware(next http.HandlerFunc) http.HandlerFunc {
 				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 				return
 			}
-			http.SetCookie(w, &http.Cookie{Name: "auth", Value: uuid})
+			http.SetCookie(w, &http.Cookie{Name: "auth", Value: uuid, Path: "/"})
 
 			ctx := context.WithValue(r.Context(), "user", nil)
 			next(w, r.WithContext(ctx))
@@ -26,6 +27,7 @@ func (t *Transport) CookiesMiddlware(next http.HandlerFunc) http.HandlerFunc {
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 			return
 		}
+		fmt.Println(user)
 		ctx := context.WithValue(r.Context(), "user", user)
 		next(w, r.WithContext(ctx))
 	}
