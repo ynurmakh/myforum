@@ -25,7 +25,7 @@ func main() {
 	_ = bservice
 	for {
 
-		fmt.Println(storage.CheckTheCookie("cooki", 1))
+		fmt.Println(storage.CheckTheCookie("cooki", 5))
 		time.Sleep(1 * time.Second)
 	}
 }
