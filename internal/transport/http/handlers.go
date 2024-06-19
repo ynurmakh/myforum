@@ -406,15 +406,19 @@ func (t *Transport) signup(w http.ResponseWriter, r *http.Request) {
 		email := r.PostForm.Get("email")
 		pass := r.PostForm.Get("pass")
 		passConfirm := r.PostForm.Get("pass-confirm")
-		id, err := t.service.CreateNewUser(&models.User{User_email: email, User_nickname: name}, pass)
-		fmt.Println("create user:", id, name, email, pass, passConfirm)
+		if pass != passConfirm {
+			// TODO add errors top
+			// t.Error = errors.New()
+			http.Redirect(w, r, fmt.Sprintf("/user/signup"), http.StatusSeeOther)
+			return
+		}
+		_, err = t.service.CreateNewUser(&models.User{User_email: email, User_nickname: name}, pass)
 		if err != nil {
 			// TODO add errors top
 			// t.Error = errors.New()
-			http.Redirect(w, r, fmt.Sprintf("/"), http.StatusSeeOther)
 		}
 
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		http.Redirect(w, r, "/user/signup", http.StatusSeeOther)
 	} else {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		return
