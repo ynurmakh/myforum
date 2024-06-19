@@ -3,12 +3,13 @@ package http
 import (
 	"bytes"
 	"fmt"
-	"forum/internal/models"
 	"log"
 	"net/http"
 	"path"
 	"strconv"
 	"strings"
+
+	"forum/internal/models"
 )
 
 type TemplateData struct {
@@ -18,7 +19,6 @@ type TemplateData struct {
 }
 
 type CheckedCategory struct {
-	// models.Category
 	Category_id   int
 	Category_name string
 	IsChecked     bool
@@ -30,16 +30,13 @@ func (t *Transport) home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if r.Method == http.MethodGet {
+
 		categories, err := t.service.GetCategiries()
-
-		// count, err := t.service.GetCountOfPosts()
-		// if err != nil {
-		// 	fmt.Println("posts not found")
-		// 	http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-		// 	return
-		// }
-
-		// fmt.Println(count, "pagination will be writed in the future")
+		if err != nil {
+			fmt.Println("posts not found")
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			return
+		}
 
 		posts, err := t.service.GetPostsForHome(1, 20, []int{}, t.User)
 		if err != nil {
@@ -47,6 +44,7 @@ func (t *Transport) home(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 			return
 		}
+
 		checkedCategories := &[]CheckedCategory{}
 		for _, c := range *categories {
 			*checkedCategories = append(*checkedCategories, CheckedCategory{
@@ -77,7 +75,8 @@ func (t *Transport) home(w http.ResponseWriter, r *http.Request) {
 
 		err = r.ParseForm()
 		if err != nil {
-			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			// TODO add errors top
+			// t.Error = errors.New()
 			http.Redirect(w, r, fmt.Sprintf("/"), http.StatusSeeOther)
 		}
 
@@ -138,7 +137,6 @@ func (t *Transport) postView(w http.ResponseWriter, r *http.Request) {
 		baseID := path.Base(r.URL.Path)
 		id, err := strconv.Atoi(baseID)
 		if err != nil || id < 1 {
-			fmt.Println("atoi err")
 			http.NotFound(w, r)
 			return
 		}
@@ -146,9 +144,8 @@ func (t *Transport) postView(w http.ResponseWriter, r *http.Request) {
 		post, err := t.service.GetPostByID(id, t.User)
 		if err != nil {
 			fmt.Println("post not found")
-		}
-		if err != nil {
-			fmt.Println("user not found")
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			return
 		}
 		data := &TemplateData{
 			Data: post,
@@ -159,15 +156,15 @@ func (t *Transport) postView(w http.ResponseWriter, r *http.Request) {
 		baseID := path.Base(r.URL.Path)
 		id, err := strconv.Atoi(baseID)
 		if err != nil || id < 1 {
-			fmt.Println("atoi err")
 			http.NotFound(w, r)
 			return
 		}
 
 		err = r.ParseForm()
 		if err != nil {
-			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-			return
+			// TODO add errors top
+			// t.Error = errors.New()
+			http.Redirect(w, r, fmt.Sprintf("/"), http.StatusSeeOther)
 		}
 		if r.PostForm.Has("post-reactions") {
 			reaction := r.PostForm.Get("post-reactions")
@@ -259,8 +256,9 @@ func (t *Transport) postCreate(w http.ResponseWriter, r *http.Request) {
 	} else if r.Method == http.MethodPost {
 		err := r.ParseForm()
 		if err != nil {
-			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
-			return
+			// TODO add errors top
+			// t.Error = errors.New()
+			http.Redirect(w, r, fmt.Sprintf("/"), http.StatusSeeOther)
 		}
 
 		categoriesList := r.PostForm["categories"]
@@ -282,6 +280,10 @@ func (t *Transport) postCreate(w http.ResponseWriter, r *http.Request) {
 		}
 
 		err = t.service.CreatePost(newPost, categoriesId)
+		if err != nil {
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+				return
+		}
 		id := newPost.Post_ID
 		http.Redirect(w, r, fmt.Sprintf("/post/view/%d", id), http.StatusSeeOther)
 	} else {
@@ -300,8 +302,9 @@ func (t *Transport) login(w http.ResponseWriter, r *http.Request) {
 	} else if r.Method == http.MethodPost {
 		err := r.ParseForm()
 		if err != nil {
-			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
-			return
+				// TODO add errors top
+			// t.Error = errors.New()
+			http.Redirect(w, r, fmt.Sprintf("/"), http.StatusSeeOther)
 		}
 		email := r.PostForm.Get("email")
 		pass := r.PostForm.Get("pass")
@@ -319,8 +322,9 @@ func (t *Transport) login(w http.ResponseWriter, r *http.Request) {
 		user, err := t.service.LoginByEmailAndPass(email, pass)
 		// user, err := t.service.LoginByEmailAndPass(email, pass, cook.Value)
 		if err != nil {
-			fmt.Println(err)
-			return
+			// TODO add errors top
+			// t.Error = errors.New()
+			http.Redirect(w, r, fmt.Sprintf("/"), http.StatusSeeOther)
 		}
 		if user == nil {
 			// Login por password not correct

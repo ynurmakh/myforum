@@ -20,11 +20,11 @@
     </div>
     <form method="post" class="reactions post-reactions">
         <input type="number" name="post-id" value="{{.Data.Post_ID}}" hidden>
-        <button class="like-btn" type="submit" name="post-reactions" value="1">
+        <button class="like-btn" type="submit" name="post-reactions" value="1" {{if not .User}}disabled{{end}}>
             <img src="/static/img/like-{{if .Data.Reactions.IsLike}}color{{else}}default{{end}}.svg" alt="like">
         </button>
         {{.Data.Reactions.Likes}}
-        <button class="dislike-btn" type="submit" name="post-reactions" value="-1">
+        <button class="dislike-btn" type="submit" name="post-reactions" value="-1" {{if not .User}}disabled{{end}}>
             <img src="/static/img/like-{{if .Data.Reactions.IsDislike}}color{{else}}default{{end}}.svg" alt="dislike">
         </button>
         {{.Data.Reactions.Dislikes}}
@@ -32,29 +32,31 @@
 
     <div class="comments">
         <h3>Comments</h3>
+        {{if .User}}
         <form class="create-comment" method="post">
             <textarea class="create-comment_input" name="comment" required></textarea>
             <button class="btn create-comment_btn" type="submit" name="create-comment">Send</button>
         </form>
+        {{end}}
         <ul class="comments-list">
+            {{$user := .User}}
             {{range .Data.Comments}}
             <li class="comments_item">
                 <div class="comments_user">
                     <div class="comments_user-name">{{.User.User_nickname}}</div>
                     <div class="comments_created">{{humanDate .Commentarie_Date}}</div>
                     {{.Comment_Id}}
-
                 </div>
                 <div class="comments_content">
                     {{.Commentraie_Content}}
                     <form method="post" class="reactions comment-reactions">
                         <input type="text" name="comment-id" value="{{.Comment_Id}}" hidden>
-                        <button class="like-btn" type="submit" name="comment-reactions" value="1">
+                        <button class="like-btn" type="submit" name="comment-reactions" value="1" {{if not $user}}disabled{{end}}>
                             <img src="/static/img/like-{{if .Reactions.IsLike}}color{{else}}default{{end}}.svg"
                                 alt="like">
                         </button>
                         {{.Reactions.Likes}}
-                        <button class="dislike-btn" type="submit" name="comment-reactions" value="-1">
+                        <button class="dislike-btn" type="submit" name="comment-reactions" value="-1" {{if not $user}}disabled{{end}}>
                             <img src="/static/img/like-{{if .Reactions.IsDislike}}color{{else}}default{{end}}.svg"
                                 alt="dislike">
                         </button>
