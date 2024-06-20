@@ -2,10 +2,11 @@ package sqlite3
 
 import (
 	"fmt"
-	"forum/internal/models"
 	"log"
 	"strconv"
 	"strings"
+
+	"forum/internal/models"
 )
 
 type temporaryStruct struct {
@@ -14,7 +15,7 @@ type temporaryStruct struct {
 	disliked_ids  string
 }
 
-func (s *Sqlite) SelectLastPostsByCount(start, onPage int, thisUser *models.User) (*[]models.Post, error) {
+func (s *Sqlite) SelectLastPostsByCount(start, onPage int, thisUser *models.User) (*[]models.Post, int, error) {
 	zapros := `
 SELECT DISTINCT
     posts.post_id,
@@ -36,14 +37,14 @@ LIMIT ? OFFSET ?
 
 	rows, err := s.db.Query(zapros, onPage, start)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 	defer rows.Close()
 
 	// берем вс е возможные катгорий чтоб потом по ней восстановить post.Categories
 	categories, err := s.GetAllCategiries()
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
 	var posts []models.Post
@@ -64,7 +65,7 @@ LIMIT ? OFFSET ?
 			&post.User.User_nickname,
 		)
 		if err != nil {
-			return nil, err
+			return nil, 0, err
 		}
 
 		parceTemporaryToPost(&post, temporary, categories, thisUser)
@@ -72,10 +73,21 @@ LIMIT ? OFFSET ?
 		posts = append(posts, post)
 	}
 
-	return &posts, nil
+	countRow := s.db.QueryRow(`
+	SELECT COUNT(DISTINCT post_id)  
+	FROM posts, json_each(posts.categories_id)
+	JOIN users ON posts.user_id = users.user_id
+	`)
+	var count int64
+	err = countRow.Scan(&count)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return &posts, int(count), nil
 }
 
-func (s *Sqlite) FilteredSelectLastPostsByCount(start, onPage int, thisUser *models.User, categoriesInt []int) (*[]models.Post, error) {
+func (s *Sqlite) FilteredSelectLastPostsByCount(start, onPage int, thisUser *models.User, categoriesInt []int) (*[]models.Post, int, error) {
 	categoriesStr := make([]string, 0, len(categoriesInt))
 	for _, cat := range categoriesInt {
 		categoriesStr = append(categoriesStr, strconv.Itoa(cat))
@@ -104,14 +116,26 @@ LIMIT %v OFFSET %v
 
 	rows, err := s.db.Query(zapros)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 	defer rows.Close()
+
+	countRow := s.db.QueryRow(`
+	SELECT COUNT(DISTINCT post_id)  
+	FROM posts, json_each(posts.categories_id)
+	JOIN users ON posts.user_id = users.user_id
+	WHERE value IN (?)	
+	`, catsJoined)
+	var count int64
+	err = countRow.Scan(&count)
+	if err != nil {
+		return nil, 0, err
+	}
 
 	// берем вс е возможные катгорий чтоб потом по ней восстановить post.Categories
 	categories, err := s.GetAllCategiries()
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
 	var posts []models.Post
@@ -132,7 +156,7 @@ LIMIT %v OFFSET %v
 			&post.User.User_nickname,
 		)
 		if err != nil {
-			return nil, err
+			return nil, 0, err
 		}
 
 		parceTemporaryToPost(&post, temporary, categories, thisUser)
@@ -140,7 +164,7 @@ LIMIT %v OFFSET %v
 		posts = append(posts, post)
 	}
 
-	return &posts, nil
+	return &posts, int(count), nil
 }
 
 func parceTemporaryToPost(post *models.Post, temporary *temporaryStruct, categories *[]models.Category, thisUser *models.User) error {

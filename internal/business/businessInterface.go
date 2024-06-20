@@ -46,7 +46,8 @@ type _4Posts interface {
 	// categories []string{} должен содержать по каким категориям отсортировать посты
 	//  Пустой categories вернет все посты несмотря на категорий
 	// READY TO USE
-	GetPostsForHome(pageNum, onPage int, categories []int, thisUser *models.User) (*[]models.Post, error)
+	GetPostsForHome(pageNum, onPage int, categories []int, thisUser *models.User) (*[]models.Post, int, error)
+
 	// READY TO USE
 	GetPostByID(Post_ID int, thisUser *models.User) (post *models.Post, err error)
 	// REAY TO USE
@@ -58,8 +59,6 @@ type _4Posts interface {
 	// REAY TO USE
 	GetCategiries() (*[]models.Category, error)
 	// Получить количество всех постов для пагинаций
-	// REAY TO USE
-	GetCountOfPosts() (int, error)
 }
 
 type _5Commentaries interface {

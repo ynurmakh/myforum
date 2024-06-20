@@ -3,7 +3,8 @@
     <h2>{{.Data.Header}}</h2>
     {{if .Data.Posts}}
     {{if .Data.Categories}}
-    <form action="/" class="categories-form">
+    {{.Data.Page.Num}}
+    <form class="categories-form">
         <ul class="categories-list">
             {{range .Data.Categories}}
             <li class="categories_item">
@@ -48,7 +49,7 @@
         {{continue}}
         {{end}}
         <li class="pagination_item">
-            <a class="{{if eq $pageNum $i}}active{{end}}" href="/page/{{$i}}">{{$i}}</a>
+            <a class="{{if eq $pageNum $i}}active{{end}}" href="/?page={{$i}}">{{$i}}</a>
         </li>
         {{end}}
     </ul>

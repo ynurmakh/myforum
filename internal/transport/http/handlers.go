@@ -2,10 +2,11 @@ package http
 
 import (
 	"fmt"
-	"forum/internal/models"
 	"net/http"
 	"path"
 	"strconv"
+
+	"forum/internal/models"
 )
 
 type TemplateData struct {
@@ -25,31 +26,36 @@ func (t *Transport) home(w http.ResponseWriter, r *http.Request) {
 			// TODO add errors top
 			// t.Error = errors.New()
 			http.Redirect(w, r, fmt.Sprintf("/"), http.StatusSeeOther)
+			return
 		}
 
 		checkedCategories := r.Form["cat"]
+		page := r.FormValue("page")
+		pageInt, err := strconv.Atoi(page)
+		if err != nil {
+			pageInt = 1
+		}
+		if pageInt < 1 {
+			t.notFound(w)
+			return
+		}
 		checkedList, idList, err := t.GetCategoriesForTemplate(checkedCategories)
 		if err != nil {
 			t.internalServerError(w, err)
 			return
 		}
 
-		countPosts, err := t.service.GetCountOfPosts()
+		user, _ := r.Context().Value("user").(*models.User)
+		// TODO why need user
+		countPostsOnPage := t.configs.PostsOnPage
+		posts, countPosts, err := t.service.GetPostsForHome(pageInt, countPostsOnPage, idList, nil)
 		if err != nil {
 			t.internalServerError(w, err)
 			return
 		}
-		countPostsOnPage := t.configs.PostsOnPage
 		countPage := countPosts / countPostsOnPage
 		if countPosts%countPostsOnPage > 0 {
 			countPage++
-		}
-		user, _ := r.Context().Value("user").(*models.User)
-		// TODO why need user
-		posts, err := t.service.GetPostsForHome(1, countPostsOnPage, idList, nil)
-		if err != nil {
-			t.internalServerError(w, err)
-			return
 		}
 
 		data := &TemplateData{
@@ -67,7 +73,7 @@ func (t *Transport) home(w http.ResponseWriter, r *http.Request) {
 					Num   int
 				}{
 					Count: make([]int, countPage+1),
-					Num:   0,
+					Num:   pageInt,
 				},
 			},
 			User: user,
@@ -80,72 +86,73 @@ func (t *Transport) home(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (t *Transport) homePages(w http.ResponseWriter, r *http.Request) {
-	if r.Method == http.MethodGet {
-		err := r.ParseForm()
-		if err != nil {
-			// TODO add errors top
-			// t.Error = errors.New()
-			http.Redirect(w, r, fmt.Sprintf("/"), http.StatusSeeOther)
-		}
-		checkedCategories := r.Form["cat"]
-		checkedList, idList, err := t.GetCategoriesForTemplate(checkedCategories)
-		if err != nil {
-			t.internalServerError(w, err)
-			return
-		}
+// func (t *Transport) homePages(w http.ResponseWriter, r *http.Request) {
+// 	if r.Method == http.MethodGet {
+// 		err := r.ParseForm()
+// 		if err != nil {
+// 			// TODO add errors top
+// 			// t.Error = errors.New()
+// 			http.Redirect(w, r, fmt.Sprintf("/"), http.StatusSeeOther)
+// 		}
+// 		checkedCategories := r.Form["cat"]
+// 		checkedList, idList, err := t.GetCategoriesForTemplate(checkedCategories)
+// 		if err != nil {
+// 			t.internalServerError(w, err)
+// 			return
+// 		}
 
-		// TODO add GetCountOfPosts after filters
-		countPosts, err := t.service.GetCountOfPosts()
-		if err != nil {
-			t.internalServerError(w, err)
-			return
-		}
-		countPostsOnPage := t.configs.PostsOnPage
-		numPageString := path.Base(r.URL.Path)
-		numPage, err := strconv.Atoi(numPageString)
-		if err != nil || numPage < 1 || (numPage-1)*countPostsOnPage > countPosts {
-			t.notFound(w)
-			return
-		}
-		countPage := countPosts / countPostsOnPage
-		if countPosts%countPostsOnPage > 0 {
-			countPage++
-		}
-		user, _ := r.Context().Value("user").(*models.User)
-		posts, err := t.service.GetPostsForHome(numPage, countPostsOnPage, idList, nil)
-		if err != nil {
-			t.internalServerError(w, err)
-			return
-		}
+// 		countPostsOnPage := t.configs.PostsOnPage
 
-		data := &TemplateData{
-			Data: struct {
-				Header     string
-				Posts      *[]models.Post
-				Categories *[]CheckedCategory
-				Page       interface{}
-			}{
-				Header:     "",
-				Posts:      posts,
-				Categories: checkedList,
-				Page: struct {
-					Count []int
-					Num   int
-				}{
-					Count: make([]int, countPage+1),
-					Num:   numPage,
-				},
-			},
-			User: user,
-		}
+// 		numPageString := path.Base(r.URL.Path)
+// 		numPage, err := strconv.Atoi(numPageString)
+// 		if err != nil || numPage < 1 {
+// 			t.notFound(w)
+// 			return
+// 		}
 
-		t.render(w, http.StatusOK, "home.html", data)
-	} else {
-		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
-		return
-	}
-}
+// 		user, _ := r.Context().Value("user").(*models.User)
+// 		posts, countPosts, err := t.service.GetPostsForHome(numPage, countPostsOnPage, idList, nil)
+// 		if err != nil {
+// 			t.internalServerError(w, err)
+// 			return
+// 		}
+// 		countPage := countPosts / countPostsOnPage
+// 		if countPosts%countPostsOnPage > 0 {
+// 			countPage++
+// 		}
+
+// 		if (numPage-1)*countPostsOnPage > countPosts {
+// 			t.notFound(w)
+// 			return
+// 		}
+
+// 		data := &TemplateData{
+// 			Data: struct {
+// 				Header     string
+// 				Posts      *[]models.Post
+// 				Categories *[]CheckedCategory
+// 				Page       interface{}
+// 			}{
+// 				Header:     "",
+// 				Posts:      posts,
+// 				Categories: checkedList,
+// 				Page: struct {
+// 					Count []int
+// 					Num   int
+// 				}{
+// 					Count: make([]int, countPage+1),
+// 					Num:   numPage,
+// 				},
+// 			},
+// 			User: user,
+// 		}
+
+// 		t.render(w, http.StatusOK, "home.html", data)
+// 	} else {
+// 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+// 		return
+// 	}
+// }
 
 func (t *Transport) postView(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
