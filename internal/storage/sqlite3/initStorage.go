@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"os"
+	"time"
 
 	_ "github.com/mattn/go-sqlite3"
 
@@ -16,7 +17,7 @@ type Sqlite struct {
 }
 
 func InitStorage() (storage.StorageInterface, error) {
-	db, err := openDB()
+	db, err := openDB("internal/storage/sqlite3/database.db")
 	if err != nil {
 		return nil, err
 	}
@@ -26,14 +27,15 @@ func InitStorage() (storage.StorageInterface, error) {
 		db:      db,
 	}
 
+	go mystorage.clearingCoockiesTable(5)
+
 	// err = mystorage.checkScheme()
 
 	var _ storage.StorageInterface = mystorage
 	return mystorage, nil
 }
 
-func openDB() (*sql.DB, error) {
-	dbPath := "internal/storage/sqlite3/database.db"
+func openDB(dbPath string) (*sql.DB, error) {
 	db, err := sql.Open("sqlite3", dbPath)
 	if err != nil {
 		return nil, err
@@ -102,4 +104,14 @@ func (s *Sqlite) pragmaScan(tablename string) ([]PragmasStruct, error) {
 	}
 
 	return res, nil
+}
+
+func (s *Sqlite) clearingCoockiesTable(slepp int) {
+	for {
+		s.db.Exec(`
+		DELETE FROM cookies
+		WHERE datetime(last_call, '+' || liveTime || ' seconds') < datetime('now');
+		`)
+		time.Sleep(time.Duration(slepp) * time.Second)
+	}
 }
