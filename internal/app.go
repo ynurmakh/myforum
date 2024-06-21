@@ -1,8 +1,6 @@
 package internal
 
 import (
-	"fmt"
-
 	"forum/internal/storage/sqlite3"
 	"forum/internal/transport/http"
 
@@ -22,15 +20,10 @@ func Run() error {
 		return err
 	}
 
-	transport, err := http.InitTransport(service)
+	_, err = http.InitTransport(service)
 	if err != nil {
 		return err
 	}
 
-	fmt.Println("Server START")
-	err = transport.Start()
-	if err != nil {
-		return err
-	}
 	return nil
 }

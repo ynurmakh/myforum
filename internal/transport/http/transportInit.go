@@ -26,6 +26,7 @@ type Transport struct {
 	configs       *configType
 	UserId        int
 	User          *models.User
+	ErrLog        *log.Logger
 }
 
 type configType struct {
@@ -38,6 +39,8 @@ func InitTransport(b business.Business) (transport.Transport, error) {
 	flag.StringVar(&t.port, "p", "8080", "port")
 	flag.Parse()
 	t.service = b.(*businessrealiz.Service)
+
+	t.ErrLog = log.New(os.Stderr, "ERROR: ", log.Ldate|log.Ltime)
 
 	templateCache, err := newTemplateCache()
 	if err != nil {

@@ -3,7 +3,6 @@ package http
 import (
 	"bytes"
 	"fmt"
-	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -19,7 +18,8 @@ func (t *Transport) render(w http.ResponseWriter, status int, page string, data 
 	ts, ok := t.templateCache[page]
 	if !ok {
 		err := fmt.Errorf("the template %s does not exist", page)
-		log.Println(err)
+		t.ErrLog.Println(err)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
 
@@ -30,8 +30,8 @@ func (t *Transport) render(w http.ResponseWriter, status int, page string, data 
 
 	err := ts.ExecuteTemplate(buf, "base", data)
 	if err != nil {
-		log.Println(err)
-		t.notFound(w)
+		t.ErrLog.Println(err)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
 
@@ -45,7 +45,7 @@ func (t *Transport) notFound(w http.ResponseWriter) {
 }
 
 func (t *Transport) internalServerError(w http.ResponseWriter, err error) {
-	log.Println(err)
+	t.ErrLog.Println(err)
 	t.render(w, http.StatusInternalServerError, "error.html", &TemplateData{Data: http.StatusText(http.StatusInternalServerError)})
 }
 

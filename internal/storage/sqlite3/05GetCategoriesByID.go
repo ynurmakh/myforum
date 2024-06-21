@@ -1,12 +1,10 @@
 package sqlite3
 
 import (
-	"fmt"
 	"forum/internal/models"
-	"strings"
 )
 
-func (s *Sqlite) GetCategiriesByID(categoriesId []int) (*[]models.Category, error) {
+func (s *Sqlite) GetCategiriesByI(categoriesId []int) (*[]models.Category, error) {
 	if len(categoriesId) == 0 {
 		return &[]models.Category{}, nil
 	}
@@ -18,9 +16,6 @@ func (s *Sqlite) GetCategiriesByID(categoriesId []int) (*[]models.Category, erro
 		placeholders[i] = "?"
 		args[i] = id
 	}
-
-	query := fmt.Sprintf("SELECT category_id, category_name FROM categories WHERE category_id IN (%s)", strings.Join(placeholders, ","))
-	fmt.Println(query)
 
 	return &[]models.Category{}, nil
 }

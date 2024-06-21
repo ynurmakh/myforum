@@ -1,6 +1,7 @@
 package http
 
 import (
+	"errors"
 	"fmt"
 	"forum/internal/models"
 	"net/http"
@@ -369,7 +370,7 @@ func (t *Transport) logout(w http.ResponseWriter, r *http.Request) {
 		c, _ := r.Cookie("auth")
 		_, err := t.service.DeregisterByCookieValue(c.Value)
 		if err != nil {
-			fmt.Println(err)
+			t.internalServerError(w, err)
 		}
 
 		http.Redirect(w, r, "/", http.StatusSeeOther)
