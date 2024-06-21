@@ -4,7 +4,7 @@
     {{if .Data.Posts}}
     {{if .Data.Categories}}
     {{.Data.Page.Num}}
-    <form class="categories-form">
+    <form action="?page=1" class="categories-form">
         <ul class="categories-list">
             {{range .Data.Categories}}
             <li class="categories_item">

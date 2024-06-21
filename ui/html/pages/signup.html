@@ -3,13 +3,13 @@
     <h2>Registration</h2>
     <form class="form" action="/user/signup" method="post">
         <label class="label" for="label">Name</label>
-        <input class="input" type="text" name="name" required>
+        <input class="input" type="text" name="name" maxlength="50" required>
         <label class="label" for="label">Email</label>
-        <input class="input" type="text" name="email" required>
+        <input class="input" type="text" name="email" maxlength="50" required>
         <label class="label" for="label">Password</label>
-        <input class="input" type="password" name="pass" required>
+        <input class="input" type="password" name="pass" maxlength="50" required>
         <label class="label" for="label">Confirm Password</label>
-        <input class="input" type="password" name="pass-confirm" required>
+        <input class="input" type="password" name="pass-confirm" maxlength="50" required>
         <input class="btn" type="submit" value="Confirm">
     </form>
 </div>

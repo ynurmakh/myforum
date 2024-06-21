@@ -2,11 +2,10 @@ package sqlite3
 
 import (
 	"fmt"
+	"forum/internal/models"
 	"log"
 	"strconv"
 	"strings"
-
-	"forum/internal/models"
 )
 
 type temporaryStruct struct {
@@ -111,8 +110,7 @@ FROM posts, json_each(posts.categories_id)
 JOIN users ON posts.user_id = users.user_id
 WHERE value IN (%s)
 ORDER BY posts.created_time DESC
-LIMIT %v OFFSET %v
-`, catsJoined, onPage, start)
+`, catsJoined)
 
 	rows, err := s.db.Query(zapros)
 	if err != nil {

@@ -45,7 +45,7 @@ func (t *Transport) notFound(w http.ResponseWriter) {
 }
 
 func (t *Transport) internalServerError(w http.ResponseWriter, err error) {
-	fmt.Println(err)
+	log.Println(err)
 	t.render(w, http.StatusInternalServerError, "error.html", &TemplateData{Data: http.StatusText(http.StatusInternalServerError)})
 }
 

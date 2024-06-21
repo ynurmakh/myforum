@@ -2,11 +2,10 @@ package http
 
 import (
 	"fmt"
+	"forum/internal/models"
 	"net/http"
 	"path"
 	"strconv"
-
-	"forum/internal/models"
 )
 
 type TemplateData struct {

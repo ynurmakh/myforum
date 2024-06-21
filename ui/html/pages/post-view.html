@@ -34,7 +34,7 @@
         <h3>Comments</h3>
         {{if .User}}
         <form class="create-comment" method="post">
-            <textarea class="create-comment_input" name="comment" required></textarea>
+            <textarea class="create-comment_input" name="comment" maxlength="2048" required></textarea>
             <button class="btn create-comment_btn" type="submit" name="create-comment">Send</button>
         </form>
         {{end}}
