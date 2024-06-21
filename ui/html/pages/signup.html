@@ -1,6 +1,7 @@
 {{define "main"}}
 <div class="login">
     <h2>Registration</h2>
+    <h3>{{.Data}}</h3>
     <form class="form" action="/user/signup" method="post">
         <label class="label" for="label">Name</label>
         <input class="input" type="text" name="name" maxlength="50" required>

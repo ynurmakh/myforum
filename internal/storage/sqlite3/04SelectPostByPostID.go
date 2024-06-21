@@ -5,6 +5,7 @@ import (
 )
 
 func (s *Sqlite) SelectPostByPostID(PostID int, thisUser *models.User) (*models.Post, error) {
+	// TODO add if user does not exists
 	categories, err := s.GetAllCategiries()
 	if err != nil {
 		return nil, err

@@ -8,8 +8,6 @@ import (
 )
 
 func Run() error {
-	// TODO Logger create/init
-
 	storage, err := sqlite3.InitStorage()
 	if err != nil {
 		return err

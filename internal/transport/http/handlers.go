@@ -1,7 +1,6 @@
 package http
 
 import (
-	"errors"
 	"fmt"
 	"forum/internal/models"
 	"net/http"
@@ -23,9 +22,7 @@ func (t *Transport) home(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
 		err := r.ParseForm()
 		if err != nil {
-			// TODO add errors top
-			// t.Error = errors.New()
-			http.Redirect(w, r, fmt.Sprintf("/"), http.StatusSeeOther)
+			t.badRequest(w)
 			return
 		}
 
@@ -46,7 +43,6 @@ func (t *Transport) home(w http.ResponseWriter, r *http.Request) {
 		}
 
 		user, _ := r.Context().Value("user").(*models.User)
-		// TODO why need user
 		countPostsOnPage := t.configs.PostsOnPage
 		posts, countPosts, err := t.service.GetPostsForHome(pageInt, countPostsOnPage, idList, nil)
 		if err != nil {
@@ -81,104 +77,36 @@ func (t *Transport) home(w http.ResponseWriter, r *http.Request) {
 
 		t.render(w, http.StatusOK, "home.html", data)
 	} else {
-		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
-		return
+		t.methodNotAllowed(w)
 	}
 }
-
-// func (t *Transport) homePages(w http.ResponseWriter, r *http.Request) {
-// 	if r.Method == http.MethodGet {
-// 		err := r.ParseForm()
-// 		if err != nil {
-// 			// TODO add errors top
-// 			// t.Error = errors.New()
-// 			http.Redirect(w, r, fmt.Sprintf("/"), http.StatusSeeOther)
-// 		}
-// 		checkedCategories := r.Form["cat"]
-// 		checkedList, idList, err := t.GetCategoriesForTemplate(checkedCategories)
-// 		if err != nil {
-// 			t.internalServerError(w, err)
-// 			return
-// 		}
-
-// 		countPostsOnPage := t.configs.PostsOnPage
-
-// 		numPageString := path.Base(r.URL.Path)
-// 		numPage, err := strconv.Atoi(numPageString)
-// 		if err != nil || numPage < 1 {
-// 			t.notFound(w)
-// 			return
-// 		}
-
-// 		user, _ := r.Context().Value("user").(*models.User)
-// 		posts, countPosts, err := t.service.GetPostsForHome(numPage, countPostsOnPage, idList, nil)
-// 		if err != nil {
-// 			t.internalServerError(w, err)
-// 			return
-// 		}
-// 		countPage := countPosts / countPostsOnPage
-// 		if countPosts%countPostsOnPage > 0 {
-// 			countPage++
-// 		}
-
-// 		if (numPage-1)*countPostsOnPage > countPosts {
-// 			t.notFound(w)
-// 			return
-// 		}
-
-// 		data := &TemplateData{
-// 			Data: struct {
-// 				Header     string
-// 				Posts      *[]models.Post
-// 				Categories *[]CheckedCategory
-// 				Page       interface{}
-// 			}{
-// 				Header:     "",
-// 				Posts:      posts,
-// 				Categories: checkedList,
-// 				Page: struct {
-// 					Count []int
-// 					Num   int
-// 				}{
-// 					Count: make([]int, countPage+1),
-// 					Num:   numPage,
-// 				},
-// 			},
-// 			User: user,
-// 		}
-
-// 		t.render(w, http.StatusOK, "home.html", data)
-// 	} else {
-// 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
-// 		return
-// 	}
-// }
 
 func (t *Transport) postView(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
 		baseID := path.Base(r.URL.Path)
 		id, err := strconv.Atoi(baseID)
 		if err != nil || id < 1 {
-			http.NotFound(w, r)
+			t.badRequest(w)
 			return
 		}
 
 		user, _ := r.Context().Value("user").(*models.User)
 		post, err := t.service.GetPostByID(id, user)
 		if err != nil {
-			t.internalServerError(w, err)
+			t.notFound(w)
 			return
 		}
 		data := &TemplateData{
 			Data: post,
 			User: user,
 		}
+
 		t.render(w, http.StatusOK, "post-view.html", data)
 	} else if r.Method == http.MethodPost {
 		baseID := path.Base(r.URL.Path)
 		id, err := strconv.Atoi(baseID)
 		if err != nil || id < 1 {
-			http.NotFound(w, r)
+			t.badRequest(w)
 			return
 		}
 
@@ -190,21 +118,20 @@ func (t *Transport) postView(w http.ResponseWriter, r *http.Request) {
 
 		err = r.ParseForm()
 		if err != nil {
-			// TODO add errors top
-			// t.Error = errors.New()
-			http.Redirect(w, r, fmt.Sprintf("/"), http.StatusSeeOther)
+			t.badRequest(w)
+			return
 		}
 		if r.PostForm.Has("post-reactions") {
 			reaction := r.PostForm.Get("post-reactions")
 			posttId := r.PostForm.Get("post-id")
 			id, err := strconv.Atoi(posttId)
 			if err != nil {
-				t.internalServerError(w, err)
+				t.badRequest(w)
 				return
 			}
 			reactionInt, err := strconv.Atoi(reaction)
 			if err != nil {
-				t.internalServerError(w, err)
+				t.badRequest(w)
 				return
 			}
 
@@ -219,12 +146,12 @@ func (t *Transport) postView(w http.ResponseWriter, r *http.Request) {
 			commentId := r.PostForm.Get("comment-id")
 			id, err := strconv.Atoi(commentId)
 			if err != nil {
-				t.internalServerError(w, err)
+				t.badRequest(w)
 				return
 			}
 			reactionInt, err := strconv.Atoi(reaction)
 			if err != nil {
-				t.internalServerError(w, err)
+				t.badRequest(w)
 				return
 			}
 
@@ -238,7 +165,7 @@ func (t *Transport) postView(w http.ResponseWriter, r *http.Request) {
 			comment := r.PostForm.Get("comment")
 			thisPost, err := t.service.GetPostByID(id, user)
 			if err != nil {
-				t.internalServerError(w, err)
+				t.badRequest(w)
 				return
 			}
 			err = t.service.CraeteCommentary(thisPost, &models.Comment{
@@ -253,8 +180,7 @@ func (t *Transport) postView(w http.ResponseWriter, r *http.Request) {
 
 		http.Redirect(w, r, fmt.Sprintf("/post/view/%d", id), http.StatusSeeOther)
 	} else {
-		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
-		return
+		t.methodNotAllowed(w)
 	}
 }
 
@@ -280,9 +206,8 @@ func (t *Transport) postCreate(w http.ResponseWriter, r *http.Request) {
 	} else if r.Method == http.MethodPost {
 		err := r.ParseForm()
 		if err != nil {
-			// TODO add errors top
-			// t.Error = errors.New()
-			http.Redirect(w, r, fmt.Sprintf("/"), http.StatusSeeOther)
+			t.badRequest(w)
+			return
 		}
 
 		categoriesList := r.PostForm["categories"]
@@ -290,7 +215,7 @@ func (t *Transport) postCreate(w http.ResponseWriter, r *http.Request) {
 		for _, c := range categoriesList {
 			num, err := strconv.Atoi(c)
 			if err != nil {
-				t.internalServerError(w, err)
+				t.badRequest(w)
 				return
 			}
 			categoriesId = append(categoriesId, num)
@@ -300,7 +225,8 @@ func (t *Transport) postCreate(w http.ResponseWriter, r *http.Request) {
 		u := r.Context().Value("user")
 		user, ok := u.(*models.User)
 		if !ok {
-			// internal
+			t.internalServerError(w, err)
+			return
 		}
 
 		newPost := &models.Post{
@@ -311,14 +237,14 @@ func (t *Transport) postCreate(w http.ResponseWriter, r *http.Request) {
 
 		err = t.service.CreatePost(newPost, categoriesId)
 		if err != nil {
-			t.internalServerError(w, err)
+			t.badRequest(w)
 			return
 		}
+
 		id := newPost.Post_ID
 		http.Redirect(w, r, fmt.Sprintf("/post/view/%d", id), http.StatusSeeOther)
 	} else {
-		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
-		return
+		t.methodNotAllowed(w)
 	}
 }
 
@@ -331,86 +257,88 @@ func (t *Transport) login(w http.ResponseWriter, r *http.Request) {
 
 		t.render(w, http.StatusOK, "login.html", data)
 	} else if r.Method == http.MethodPost {
+		data := &TemplateData{}
 		err := r.ParseForm()
 		if err != nil {
-			// TODO add errors top
-			// t.Error = errors.New()
-			http.Redirect(w, r, fmt.Sprintf("/"), http.StatusSeeOther)
+			t.badRequest(w)
+			return
 		}
 		email := r.PostForm.Get("email")
 		pass := r.PostForm.Get("pass")
-		cook, err := r.Cookie("auth")
-		var newUuid string
+		authCookie, err := r.Cookie("auth")
 		if err != nil {
-			newUuid, err = t.service.CreateNewCookie()
+			authCookie, err = t.CreateCookie()
 			if err != nil {
-				// internal
+				t.internalServerError(w, err)
+				return
 			}
-			http.SetCookie(w, &http.Cookie{Name: "auth", Value: newUuid, Path: "/"})
-			cook = &http.Cookie{Name: "auth", Value: newUuid, Path: "/"}
+			http.SetCookie(w, authCookie)
 		}
 
-		// user, err := t.service.LoginByEmailAndPass(email, pass)
-		_, err = t.service.LoginByEmailAndPass(email, pass, cook.Value)
+		_, err = t.service.LoginByEmailAndPass(email, pass, authCookie.Value)
 		if err != nil {
-			// TODO add errors top
-			// t.Error = errors.New()
-			http.Redirect(w, r, fmt.Sprintf("/"), http.StatusSeeOther)
+			data.Data = err
+			t.render(w, http.StatusUnprocessableEntity, "login.html", data)
+			return
 		}
 
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 	} else {
-		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
-		return
+		t.methodNotAllowed(w)
 	}
 }
 
 func (t *Transport) logout(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
-		c, _ := r.Cookie("auth")
-		_, err := t.service.DeregisterByCookieValue(c.Value)
+		c, err := r.Cookie("auth")
+		if err != nil {
+			t.badRequest(w)
+			return
+		}
+		_, err = t.service.DeregisterByCookieValue(c.Value)
 		if err != nil {
 			t.internalServerError(w, err)
+			return
 		}
 
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 	} else {
-		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
-		return
+		t.methodNotAllowed(w)
 	}
 }
 
 func (t *Transport) signup(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
 		data := &TemplateData{}
+
 		t.render(w, http.StatusOK, "signup.html", data)
 	} else if r.Method == http.MethodPost {
+		data := &TemplateData{}
+
 		err := r.ParseForm()
 		if err != nil {
-			// TODO add errors top
-			// t.Error = errors.New()
-			http.Redirect(w, r, fmt.Sprintf("/"), http.StatusSeeOther)
+			t.badRequest(w)
+			return
 		}
 		name := r.PostForm.Get("name")
 		email := r.PostForm.Get("email")
 		pass := r.PostForm.Get("pass")
 		passConfirm := r.PostForm.Get("pass-confirm")
 		if pass != passConfirm {
-			// TODO add errors top
-			// t.Error = errors.New()
-			http.Redirect(w, r, fmt.Sprintf("/user/signup"), http.StatusSeeOther)
+			data.Data = err
+			t.render(w, http.StatusUnprocessableEntity, "login.html", data)
 			return
 		}
 		_, err = t.service.CreateNewUser(&models.User{User_email: email, User_nickname: name}, pass)
 		if err != nil {
-			// TODO add errors top
-			// t.Error = errors.New()
+			data.Data = err
+			t.render(w, http.StatusUnprocessableEntity, "signup.html", data)
+			return
 		}
 
 		http.Redirect(w, r, "/user/signup", http.StatusSeeOther)
 	} else {
-		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
-		return
+		t.methodNotAllowed(w)
 	}
 }
 
@@ -437,8 +365,7 @@ func (t *Transport) myPosts(w http.ResponseWriter, r *http.Request) {
 		}
 		t.render(w, http.StatusOK, "home.html", data)
 	} else {
-		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
-		return
+		t.methodNotAllowed(w)
 	}
 }
 
@@ -465,7 +392,6 @@ func (t *Transport) liked(w http.ResponseWriter, r *http.Request) {
 		}
 		t.render(w, http.StatusOK, "home.html", data)
 	} else {
-		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
-		return
+		t.methodNotAllowed(w)
 	}
 }

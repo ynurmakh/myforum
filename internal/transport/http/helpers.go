@@ -44,6 +44,14 @@ func (t *Transport) notFound(w http.ResponseWriter) {
 	t.render(w, http.StatusNotFound, "error.html", &TemplateData{Data: "Page Not Found"})
 }
 
+func (t *Transport) badRequest(w http.ResponseWriter) {
+	t.render(w, http.StatusBadRequest, "error.html", &TemplateData{Data: "Bad Request"})
+}
+
+func (t *Transport) methodNotAllowed(w http.ResponseWriter) {
+	t.render(w, http.StatusMethodNotAllowed, "error.html", &TemplateData{Data: "Method Not Allowed"})
+}
+
 func (t *Transport) internalServerError(w http.ResponseWriter, err error) {
 	t.ErrLog.Println(err)
 	t.render(w, http.StatusInternalServerError, "error.html", &TemplateData{Data: http.StatusText(http.StatusInternalServerError)})

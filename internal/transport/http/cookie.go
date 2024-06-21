@@ -7,21 +7,21 @@ import (
 
 func (t *Transport) CookiesMiddlware(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		cookie, err := r.Cookie("auth")
+		authCookie, err := r.Cookie("auth")
 		if err != nil {
 
-			uuid, err := t.service.CreateNewCookie()
+			newCookiie, err := t.CreateCookie()
 			if err != nil {
 				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 				return
 			}
-			http.SetCookie(w, &http.Cookie{Name: "auth", Value: uuid, Path: "/"})
+			http.SetCookie(w, newCookiie)
 
 			ctx := context.WithValue(r.Context(), "user", nil)
 			next(w, r.WithContext(ctx))
 			return
 		}
-		user, err := t.service.GetUserByCookie(cookie.Value)
+		user, err := t.service.GetUserByCookie(authCookie.Value)
 		if err != nil {
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 			return
@@ -30,4 +30,12 @@ func (t *Transport) CookiesMiddlware(next http.HandlerFunc) http.HandlerFunc {
 		ctx := context.WithValue(r.Context(), "user", user)
 		next(w, r.WithContext(ctx))
 	}
+}
+
+func (t *Transport) CreateCookie() (*http.Cookie, error) {
+	uuid, err := t.service.CreateNewCookie()
+	if err != nil {
+		return nil, err
+	}
+	return &http.Cookie{Name: "auth", Value: uuid, Path: "/", MaxAge: t.configs.CookiesMaxAge}, nil
 }

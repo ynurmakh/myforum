@@ -12,8 +12,10 @@
 </head>
 <body>
     <header class="header">
-        <h1><a href='/'>Forum</a></h1>
-        {{template "nav" .}}
+        <div class="wrap">
+            <h1><a href='/'>Forum</a></h1>
+            {{template "nav" .}}
+        </div>
     </header>
     <main class="main">
         {{template "main" .}}
