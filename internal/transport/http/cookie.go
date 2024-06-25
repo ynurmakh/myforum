@@ -9,10 +9,9 @@ func (t *Transport) CookiesMiddlware(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		authCookie, err := r.Cookie("auth")
 		if err != nil {
-
 			newCookiie, err := t.CreateCookie()
 			if err != nil {
-				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+				http.Redirect(w, r, "/user/login", http.StatusSeeOther)
 				return
 			}
 			http.SetCookie(w, newCookiie)
@@ -23,7 +22,7 @@ func (t *Transport) CookiesMiddlware(next http.HandlerFunc) http.HandlerFunc {
 		}
 		user, err := t.service.GetUserByCookie(authCookie.Value)
 		if err != nil {
-			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			http.Redirect(w, r, "/user/login", http.StatusSeeOther)
 			return
 		}
 

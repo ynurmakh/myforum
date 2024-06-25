@@ -2,10 +2,11 @@ package http
 
 import (
 	"fmt"
-	"forum/internal/models"
 	"net/http"
 	"path"
 	"strconv"
+
+	"forum/internal/models"
 )
 
 type TemplateData struct {
@@ -224,8 +225,8 @@ func (t *Transport) postCreate(w http.ResponseWriter, r *http.Request) {
 		content := r.PostForm.Get("content")
 		u := r.Context().Value("user")
 		user, ok := u.(*models.User)
-		if !ok {
-			t.internalServerError(w, err)
+		if !ok || user == nil {
+			http.Redirect(w, r, "/", http.StatusSeeOther)
 			return
 		}
 

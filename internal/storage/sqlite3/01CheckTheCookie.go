@@ -2,8 +2,9 @@ package sqlite3
 
 import (
 	"database/sql"
-	"forum/internal/models"
 	"time"
+
+	"forum/internal/models"
 )
 
 func (s *Sqlite) CheckTheCookie(cookie string, livetime int) (*models.User, error) {
